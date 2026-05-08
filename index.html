@@ -1238,12 +1238,34 @@
             { id: 'LW-03', name: 'Lavadora Horizontal', type: 'washer', status: 'error', temp: 40, ph: 7.2, level: 10, progress: 5, timeRemaining: 'Fault' }
         ];
 
+        function updateMachinesTelemetry() {
+            machines.forEach(m => {
+                if (m.status === 'running') {
+                    m.progress = (m.progress + Math.random() * 2);
+                    if (m.progress >= 100) m.progress = 0;
+                    m.temp = +(m.temp + (Math.random() * 0.4 - 0.2)).toFixed(1);
+                    if (m.type === 'washer') m.ph = +(m.ph + (Math.random() * 0.1 - 0.05)).toFixed(2);
+                    
+                    // Update DOM directly for smooth transitions
+                    const monitorBar = document.querySelector(`.machine-card[data-id="${m.id}"] .bar-fill`);
+                    if (monitorBar) monitorBar.style.width = m.progress + '%';
+                    
+                    const interventionBar = document.querySelector(`.intervention-row[data-id="${m.id}"] .bar-fill-inner`);
+                    if (interventionBar) interventionBar.style.width = m.progress + '%';
+
+                    const tempVal = document.querySelector(`.machine-card[data-id="${m.id}"] .tele-temp`);
+                    if (tempVal) tempVal.textContent = m.temp + '°C';
+                }
+            });
+        }
+
         function renderMachines() {
             const grid = document.getElementById('machine-monitor-grid');
             grid.innerHTML = '';
             machines.forEach(m => {
                 const card = document.createElement('div');
                 card.className = 'machine-card';
+                card.setAttribute('data-id', m.id);
                 card.innerHTML = `
                     <div class="machine-header">
                         <span class="machine-name"><i data-lucide="${m.type === 'washer' ? 'droplet' : 'sun'}"></i> ${m.name}</span>
@@ -1251,7 +1273,7 @@
                     </div>
                     <div class="machine-body">
                         <div class="telemetry-row"><span class="tele-label">ID</span><span class="tele-value">${m.id}</span></div>
-                        <div class="telemetry-row"><span class="tele-label">Temperatura</span><span class="tele-value">${m.temp}°C</span></div>
+                        <div class="telemetry-row"><span class="tele-label">Temperatura</span><span class="tele-value tele-temp">${m.temp}°C</span></div>
                         ${m.type === 'washer' ? `<div class="telemetry-row"><span class="tele-label">Nível pH</span><span class="tele-value">${m.ph}</span></div>` : ''}
                         <div class="progress-container">
                             <div class="progress-info"><span>Progresso</span><span>${m.timeRemaining}</span></div>
@@ -1273,10 +1295,17 @@
             body.innerHTML = '';
             machines.forEach(m => {
                 const row = document.createElement('tr');
+                row.className = 'intervention-row';
+                row.setAttribute('data-id', m.id);
                 row.innerHTML = `
                     <td><div style="font-weight: 600;">${m.name}</div><div style="font-size: 0.7rem; color: var(--text-tertiary);">${m.id}</div></td>
                     <td><span class="status-pill status-${m.status}">${m.status}</span></td>
-                    <td><div style="font-size: 0.8rem;">T: ${m.temp}°C | PH: ${m.ph}</div><div style="width: 100px; height: 4px; background: #333; margin-top: 4px;"><div style="width: ${m.progress}%; background: var(--primary); height: 100%;"></div></div></td>
+                    <td>
+                        <div style="font-size: 0.8rem;">T: ${m.temp}°C | PH: ${m.ph}</div>
+                        <div style="width: 100px; height: 4px; background: #333; margin-top: 4px; border-radius: 2px; overflow: hidden;">
+                            <div class="bar-fill-inner" style="width: ${m.progress}%; background: var(--primary); height: 100%; transition: width 0.5s ease;"></div>
+                        </div>
+                    </td>
                     <td>
                         <div style="display: flex; gap: 5px;">
                             <button class="btn btn-danger" onclick="sendIntervention('${m.id}', 'E-STOP')">${i18n[currentLang].btn_emergency}</button>
@@ -1511,21 +1540,6 @@
                 utilChart.data.datasets[0].data = newData;
                 utilChart.update();
             }
-        }
-
-        function updateMachinesTelemetry() {
-            machines.forEach(m => {
-                if (m.status === 'running') {
-                    m.progress = (m.progress + Math.random() * 2);
-                    if (m.progress >= 100) m.progress = 0;
-                    m.temp = +(m.temp + (Math.random() * 0.4 - 0.2)).toFixed(1);
-                    if (m.type === 'washer') m.ph = +(m.ph + (Math.random() * 0.1 - 0.05)).toFixed(2);
-                }
-            });
-            
-            const activeView = document.querySelector('.view.active').id;
-            if(activeView === 'view-monitor') renderMachines();
-            if(activeView === 'view-intervention') renderIntervention();
         }
 
         function startSimulation() {
