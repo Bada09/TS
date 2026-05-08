@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LAVAÍ - Industrial Laundry Command Center</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             /* Color Palette - Premium Dark Industrial */
@@ -14,11 +17,11 @@
             --bg-surface: #14181f;
             --bg-card: rgba(30, 35, 45, 0.7);
             --bg-accent: #1e2530;
-            
+
             --text-primary: #f0f2f5;
             --text-secondary: #94a3b8;
             --text-tertiary: #64748b;
-            
+
             --primary: #3b82f6;
             --primary-glow: rgba(59, 130, 246, 0.5);
             --success: #10b981;
@@ -26,16 +29,16 @@
             --danger: #ef4444;
             --info: #06b6d4;
             --purple: #8b5cf6;
-            
+
             --border: rgba(255, 255, 255, 0.08);
             --border-hover: rgba(255, 255, 255, 0.15);
-            
+
             --sidebar-width: 260px;
             --header-height: 70px;
-            
+
             --font-main: 'Outfit', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            
+
             --glass-bg: rgba(20, 24, 31, 0.8);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
@@ -236,8 +239,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* --- Dashboard Components --- */
@@ -290,8 +300,13 @@
             gap: 4px;
         }
 
-        .trend-up { color: var(--success); }
-        .trend-down { color: var(--danger); }
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
 
         /* --- Machine Monitor --- */
         .machine-grid {
@@ -337,10 +352,25 @@
             text-transform: uppercase;
         }
 
-        .status-running { background: rgba(16, 185, 129, 0.2); color: var(--success); }
-        .status-idle { background: rgba(148, 163, 184, 0.2); color: var(--text-secondary); }
-        .status-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-        .status-error { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .status-running {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-idle {
+            background: rgba(148, 163, 184, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
 
         .machine-body {
             padding: 1.5rem;
@@ -412,9 +442,19 @@
             gap: 6px;
         }
 
-        .btn:hover { background: var(--bg-accent); }
-        .btn-danger { color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
-        .btn-danger:hover { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .btn:hover {
+            background: var(--bg-accent);
+        }
+
+        .btn-danger {
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+        }
 
         /* --- Tables --- */
         .table-card {
@@ -478,11 +518,13 @@
             gap: 15px;
             margin-bottom: 15px;
         }
+
         .slider-label {
             font-size: 0.85rem;
             color: var(--text-secondary);
             min-width: 200px;
         }
+
         .slider-val {
             font-size: 0.85rem;
             font-weight: 600;
@@ -490,6 +532,7 @@
             min-width: 60px;
             text-align: right;
         }
+
         input[type=range] {
             flex: 1;
             accent-color: var(--primary);
@@ -501,11 +544,13 @@
             gap: 10px;
             margin-bottom: 10px;
         }
+
         .breakdown-label {
             font-size: 0.8rem;
             color: var(--text-secondary);
             min-width: 120px;
         }
+
         .breakdown-bar-bg {
             flex: 1;
             height: 8px;
@@ -513,6 +558,7 @@
             border-radius: 4px;
             overflow: hidden;
         }
+
         .breakdown-bar-fill {
             height: 100%;
             transition: width 0.3s;
@@ -522,6 +568,7 @@
         .db-card {
             border-left: 4px solid var(--primary);
         }
+
         .field-row {
             display: flex;
             gap: 10px;
@@ -529,9 +576,25 @@
             border-bottom: 1px solid var(--border);
             align-items: center;
         }
-        .field-name { font-weight: 600; color: var(--text-primary); font-size: 0.85rem; min-width: 120px; }
-        .field-type { font-family: var(--font-mono); color: var(--info); font-size: 0.75rem; }
-        .field-desc { color: var(--text-tertiary); font-size: 0.8rem; flex: 1; }
+
+        .field-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            min-width: 120px;
+        }
+
+        .field-type {
+            font-family: var(--font-mono);
+            color: var(--info);
+            font-size: 0.75rem;
+        }
+
+        .field-desc {
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+            flex: 1;
+        }
 
         .code-block {
             background: var(--bg-deep);
@@ -544,9 +607,18 @@
             margin-top: 1rem;
             border: 1px solid var(--border);
         }
-        .code-kw { color: #93c5fd; }
-        .code-fn { color: #bef264; }
-        .code-str { color: #fdba74; }
+
+        .code-kw {
+            color: #93c5fd;
+        }
+
+        .code-fn {
+            color: #bef264;
+        }
+
+        .code-str {
+            color: #fdba74;
+        }
 
         /* --- Notifications Toast --- */
         #notification-toast {
@@ -557,52 +629,163 @@
             color: white;
             padding: 1rem 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             display: none;
             z-index: 1000;
             animation: slideIn 0.3s ease-out;
         }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
+        /* --- Mobile Responsiveness --- */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+                box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .grid-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .header-right .lang-selector,
+            .header-right .user-profile div:not(.avatar) {
+                display: none;
+            }
+
+            .main-wrapper {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .view-container {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            header {
+                padding: 0 1rem;
+            }
+
+            .table-card {
+                padding: 1rem;
+                overflow-x: auto;
+            }
+
+            .custom-table {
+                min-width: 600px;
+            }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
     </style>
 </head>
+
 <body>
 
+    <div class="overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="logo-container">
             <div class="logo-icon">
                 <i data-lucide="waves" color="white"></i>
             </div>
             <span class="logo-text">LAVAÍ</span>
+            <button class="mobile-toggle" onclick="toggleSidebar()" style="margin-left: auto;">
+                <i data-lucide="x"></i>
+            </button>
         </div>
 
         <nav class="nav-menu">
             <div class="nav-label" data-i18n="nav_op_control">Operação & Controle</div>
             <div class="nav-item">
-                <a class="nav-link active" onclick="switchView('dashboard', this)">
+                <a class="nav-link active"
+                    onclick="switchView('dashboard', this); if(window.innerWidth <= 768) toggleSidebar();">
                     <i data-lucide="layout-dashboard"></i>
                     <span data-i18n="nav_dashboard">Dashboard</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="nav-link" onclick="switchView('monitor', this)">
+                <a class="nav-link"
+                    onclick="switchView('monitor', this); if(window.innerWidth <= 768) toggleSidebar();">
                     <i data-lucide="activity"></i>
                     <span data-i18n="nav_monitor">Monitoramento</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="nav-link" onclick="switchView('intervention', this)">
+                <a class="nav-link"
+                    onclick="switchView('intervention', this); if(window.innerWidth <= 768) toggleSidebar();">
                     <i data-lucide="zap"></i>
                     <span data-i18n="nav_intervention">Intervenção</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="nav-link" onclick="switchView('rfid', this)">
+                <a class="nav-link" onclick="switchView('rfid', this); if(window.innerWidth <= 768) toggleSidebar();">
                     <i data-lucide="rfid"></i>
                     <span data-i18n="nav_rfid">Rastreamento RFID</span>
                 </a>
@@ -610,25 +793,28 @@
 
             <div class="nav-label" data-i18n="nav_mgmt_ai">Gestão & Inteligência</div>
             <div class="nav-item">
-                <a class="nav-link" onclick="switchView('client-portal', this)">
+                <a class="nav-link"
+                    onclick="switchView('client-portal', this); if(window.innerWidth <= 768) toggleSidebar();">
                     <i data-lucide="users"></i>
                     <span data-i18n="nav_client_portal">Portal do Cliente</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="nav-link" onclick="switchView('simulator', this)">
+                <a class="nav-link"
+                    onclick="switchView('simulator', this); if(window.innerWidth <= 768) toggleSidebar();">
                     <i data-lucide="calculator"></i>
                     <span data-i18n="nav_simulator">Simulador de Custo</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="nav-link" onclick="switchView('alerts', this)">
+                <a class="nav-link" onclick="switchView('alerts', this); if(window.innerWidth <= 768) toggleSidebar();">
                     <i data-lucide="bell-ring"></i>
                     <span data-i18n="nav_alerts">Motor de Alertas</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="nav-link" onclick="switchView('reports', this)">
+                <a class="nav-link"
+                    onclick="switchView('reports', this); if(window.innerWidth <= 768) toggleSidebar();">
                     <i data-lucide="bar-chart-3"></i>
                     <span data-i18n="nav_reports">Relatórios Hub</span>
                 </a>
@@ -636,7 +822,8 @@
 
             <div class="nav-label" data-i18n="nav_infra">Infraestrutura</div>
             <div class="nav-item">
-                <a class="nav-link" onclick="switchView('architecture', this)">
+                <a class="nav-link"
+                    onclick="switchView('architecture', this); if(window.innerWidth <= 768) toggleSidebar();">
                     <i data-lucide="database"></i>
                     <span data-i18n="nav_architecture">Arquitetura de Dados</span>
                 </a>
@@ -656,6 +843,9 @@
     <div class="main-wrapper">
         <header>
             <div class="header-left">
+                <button class="mobile-toggle" onclick="toggleSidebar()" style="margin-right: 10px;">
+                    <i data-lucide="menu"></i>
+                </button>
                 <span class="page-title" id="current-view-title" data-i18n="nav_dashboard">Dashboard</span>
             </div>
             <div class="header-right">
@@ -678,7 +868,7 @@
         </header>
 
         <div class="view-container">
-            
+
             <!-- VIEW: DASHBOARD (Resumo Global) -->
             <div id="view-dashboard" class="view active">
                 <div class="grid-stats">
@@ -689,7 +879,8 @@
                         </div>
                         <div class="stat-value" id="stat-oee-val">84.2%</div>
                         <div class="stat-trend trend-up">
-                            <i data-lucide="trending-up" size="14"></i> +2.4% <span data-i18n="vs_yesterday">vs ontem</span>
+                            <i data-lucide="trending-up" size="14"></i> +2.4% <span data-i18n="vs_yesterday">vs
+                                ontem</span>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -705,17 +896,20 @@
                     <div class="stat-card">
                         <div class="stat-header">
                             <span class="stat-label" data-i18n="stat_water_cons">Consumo Água</span>
-                            <i data-lucide="droplets" class="stat-icon" style="color: #06b6d4; background: rgba(6, 182, 212, 0.1);"></i>
+                            <i data-lucide="droplets" class="stat-icon"
+                                style="color: #06b6d4; background: rgba(6, 182, 212, 0.1);"></i>
                         </div>
                         <div class="stat-value" id="stat-water-val">4.2m³</div>
                         <div class="stat-trend trend-down">
-                            <i data-lucide="trending-down" size="14"></i> -12% <span data-i18n="vs_target">vs meta</span>
+                            <i data-lucide="trending-down" size="14"></i> -12% <span data-i18n="vs_target">vs
+                                meta</span>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
                             <span class="stat-label" data-i18n="stat_alarms">Alarmes Ativos</span>
-                            <i data-lucide="alert-triangle" class="stat-icon" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);"></i>
+                            <i data-lucide="alert-triangle" class="stat-icon"
+                                style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);"></i>
                         </div>
                         <div class="stat-value" id="stat-alarms-val">02</div>
                         <div class="stat-trend">
@@ -726,11 +920,13 @@
 
                 <div class="chart-grid">
                     <div class="chart-container">
-                        <div class="card-title" style="margin-bottom: 1rem;" data-i18n="chart_production">Produção Diária (kg)</div>
+                        <div class="card-title" style="margin-bottom: 1rem;" data-i18n="chart_production">Produção
+                            Diária (kg)</div>
                         <canvas id="productionChart"></canvas>
                     </div>
                     <div class="chart-container">
-                        <div class="card-title" style="margin-bottom: 1rem;" data-i18n="chart_utilities">Consumo de Utilidades</div>
+                        <div class="card-title" style="margin-bottom: 1rem;" data-i18n="chart_utilities">Consumo de
+                            Utilidades</div>
                         <canvas id="utilityChart"></canvas>
                     </div>
                 </div>
@@ -748,7 +944,9 @@
                 <div class="table-card">
                     <div class="table-card-header">
                         <h3 data-i18n="intervention_panel">Painel de Intervenção Rápida</h3>
-                        <span class="badge status-running" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);" data-i18n="emergency_mode">Modo Emergência Disponível</span>
+                        <span class="badge status-running"
+                            style="background: rgba(239, 68, 68, 0.1); color: var(--danger);"
+                            data-i18n="emergency_mode">Modo Emergência Disponível</span>
                     </div>
                     <table class="custom-table">
                         <thead>
@@ -770,7 +968,8 @@
             <div id="view-client-portal" class="view">
                 <div class="grid-stats">
                     <div class="stat-card">
-                        <span class="stat-label" data-i18n="stat_client_batches">Lotes Ativos (Hospital Santa Cruz)</span>
+                        <span class="stat-label" data-i18n="stat_client_batches">Lotes Ativos (Hospital Santa
+                            Cruz)</span>
                         <div class="stat-value">04</div>
                     </div>
                     <div class="stat-card">
@@ -786,7 +985,7 @@
                         <div class="stat-value">380</div>
                     </div>
                 </div>
-                
+
                 <div class="table-card">
                     <div class="table-card-header">
                         <h3 data-i18n="client_batches_title">Rastreamento de Lotes</h3>
@@ -799,12 +998,14 @@
 
             <!-- VIEW: SIMULATOR (Custo por Ciclo) -->
             <div id="view-simulator" class="view">
-                <div id="sim-status-band" class="status-pill" style="width: 100%; text-align: center; margin-bottom: 1.5rem; padding: 12px; font-weight: 600;">Custo dentro do benchmark</div>
-                
+                <div id="sim-status-band" class="status-pill"
+                    style="width: 100%; text-align: center; margin-bottom: 1.5rem; padding: 12px; font-weight: 600;">
+                    Custo dentro do benchmark</div>
+
                 <div class="chart-grid" style="grid-template-columns: 1fr 1fr;">
                     <div class="table-card">
                         <h3 style="margin-bottom: 1.5rem;" data-i18n="sim_params">Parâmetros de Produção</h3>
-                        
+
                         <div class="slider-row">
                             <span class="slider-label" data-i18n="sim_load">Carga do ciclo (kg)</span>
                             <input type="range" id="sim-kg" min="20" max="150" step="1" value="80" oninput="runSim()">
@@ -820,7 +1021,7 @@
                             <input type="range" id="sim-ops" min="1" max="5" step="1" value="2" oninput="runSim()">
                             <span class="slider-val" id="v-sim-ops">2</span>
                         </div>
-                        
+
                         <h3 style="margin: 2rem 0 1rem 0;" data-i18n="sim_utilities">Insumos & Tarifas</h3>
                         <div class="slider-row">
                             <span class="slider-label" data-i18n="sim_water">Água consumida (L/kg)</span>
@@ -829,15 +1030,17 @@
                         </div>
                         <div class="slider-row">
                             <span class="slider-label" data-i18n="sim_energy">Energia (kWh/ciclo)</span>
-                            <input type="range" id="sim-energy" min="2" max="30" step="0.5" value="12" oninput="runSim()">
+                            <input type="range" id="sim-energy" min="2" max="30" step="0.5" value="12"
+                                oninput="runSim()">
                             <span class="slider-val" id="v-sim-energy">12 kWh</span>
                         </div>
                     </div>
 
                     <div class="table-card">
                         <h3 style="margin-bottom: 1.5rem;" data-i18n="sim_results">Resultado do Ciclo</h3>
-                        
-                        <div class="grid-stats" style="grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem;">
+
+                        <div class="grid-stats"
+                            style="grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem;">
                             <div class="stat-card" style="padding: 1rem; border-radius: 12px;">
                                 <span class="stat-label" data-i18n="sim_total_cost">Custo Total</span>
                                 <div class="stat-value" id="r-sim-total" style="font-size: 1.5rem;">R$ 154.20</div>
@@ -853,7 +1056,8 @@
                             <!-- Generated by JS -->
                         </div>
 
-                        <div id="sim-insight" style="margin-top: 1.5rem; padding: 15px; background: var(--bg-accent); border-radius: 12px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+                        <div id="sim-insight"
+                            style="margin-top: 1.5rem; padding: 15px; background: var(--bg-accent); border-radius: 12px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
                             <!-- Insight text -->
                         </div>
                     </div>
@@ -897,7 +1101,8 @@
                 <div class="table-card">
                     <div class="table-card-header">
                         <h3 data-i18n="report_history">Histórico de Lotes e Desempenho</h3>
-                        <button class="btn" style="width: auto; padding: 5px 15px;"><i data-lucide="download"></i> Export PDF</button>
+                        <button class="btn" style="width: auto; padding: 5px 15px;"><i data-lucide="download"></i>
+                            Export PDF</button>
                     </div>
                     <canvas id="efficiencyHistoryChart" style="max-height: 300px;"></canvas>
                 </div>
@@ -933,33 +1138,46 @@
                 <div class="grid-stats" style="grid-template-columns: repeat(3, 1fr);">
                     <div class="stat-card db-card">
                         <h3 style="font-size: 1rem;" data-i18n="db_time_series">TimescaleDB</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-tertiary);" data-i18n="db_time_series_desc">Armazenamento de alta performance para métricas de sensores (raw).</p>
+                        <p style="font-size: 0.8rem; color: var(--text-tertiary);" data-i18n="db_time_series_desc">
+                            Armazenamento de alta performance para métricas de sensores (raw).</p>
                     </div>
                     <div class="stat-card" style="border-left: 4px solid var(--success);">
                         <h3 style="font-size: 1rem;" data-i18n="db_relational">PostgreSQL</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-tertiary);" data-i18n="db_relational_desc">Dados mestres de clientes, contratos e rastreabilidade de itens.</p>
+                        <p style="font-size: 0.8rem; color: var(--text-tertiary);" data-i18n="db_relational_desc">Dados
+                            mestres de clientes, contratos e rastreabilidade de itens.</p>
                     </div>
                     <div class="stat-card" style="border-left: 4px solid var(--info);">
                         <h3 style="font-size: 1rem;" data-i18n="db_ai_model">AI Engine</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-tertiary);" data-i18n="db_ai_model_desc">Modelagem preditiva de falhas (MTBF) e otimização de carga.</p>
+                        <p style="font-size: 0.8rem; color: var(--text-tertiary);" data-i18n="db_ai_model_desc">
+                            Modelagem preditiva de falhas (MTBF) e otimização de carga.</p>
                     </div>
                 </div>
 
                 <div class="chart-grid" style="margin-top: 1.5rem;">
                     <div class="table-card">
                         <h3 data-i18n="schema_readings" style="margin-bottom:1rem;">Esquema: sensor_readings</h3>
-                        <div class="field-row"><span class="field-name">time</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">PK - Índice temporal principal</span></div>
-                        <div class="field-row"><span class="field-name">machine_id</span><span class="field-type">TEXT</span><span class="field-desc">Tag de identificação da máquina</span></div>
-                        <div class="field-row"><span class="field-name">metric</span><span class="field-type">TEXT</span><span class="field-desc">Tipo (temp, ph, rpm, vibr)</span></div>
-                        <div class="field-row"><span class="field-name">value</span><span class="field-type">DOUBLE</span><span class="field-desc">Leitura bruta do PLC</span></div>
+                        <div class="field-row"><span class="field-name">time</span><span
+                                class="field-type">TIMESTAMPTZ</span><span class="field-desc">PK - Índice temporal
+                                principal</span></div>
+                        <div class="field-row"><span class="field-name">machine_id</span><span
+                                class="field-type">TEXT</span><span class="field-desc">Tag de identificação da
+                                máquina</span></div>
+                        <div class="field-row"><span class="field-name">metric</span><span
+                                class="field-type">TEXT</span><span class="field-desc">Tipo (temp, ph, rpm, vibr)</span>
+                        </div>
+                        <div class="field-row"><span class="field-name">value</span><span
+                                class="field-type">DOUBLE</span><span class="field-desc">Leitura bruta do PLC</span>
+                        </div>
                     </div>
                     <div class="table-card">
                         <h3 data-i18n="sql_optimization" style="margin-bottom:1rem;">SQL de Otimização (OEE)</h3>
                         <div class="code-block">
                             <span class="code-kw">SELECT</span> machine_id, <br>
-                            &nbsp;&nbsp;<span class="code-fn">AVG</span>(cost_total / kg_loaded) <span class="code-kw">AS</span> efficiency <br>
+                            &nbsp;&nbsp;<span class="code-fn">AVG</span>(cost_total / kg_loaded) <span
+                                class="code-kw">AS</span> efficiency <br>
                             <span class="code-kw">FROM</span> cycle_metrics <br>
-                            <span class="code-kw">WHERE</span> started_at > <span class="code-fn">NOW</span>() - <span class="code-str">'24h'</span> <br>
+                            <span class="code-kw">WHERE</span> started_at > <span class="code-fn">NOW</span>() - <span
+                                class="code-str">'24h'</span> <br>
                             <span class="code-kw">GROUP BY</span> machine_id;
                         </div>
                     </div>
@@ -1084,7 +1302,7 @@
                 btn_drain: "Drain",
                 btn_refill: "Refill",
                 btn_boost: "Boost",
-                stat_total_kg: "Total Processed (Month)",
+                stat_total_kg: "Total Process processed (Month)",
                 stat_efficiency: "Energy Efficiency",
                 stat_uptime: "Uptime",
                 stat_reprocess: "Reprocess Rate",
@@ -1197,33 +1415,42 @@
             });
             // Update dynamic parts
             const activeView = document.querySelector('.view.active').id;
-            if(activeView === 'view-monitor') renderMachines();
-            if(activeView === 'view-intervention') renderIntervention();
-            if(activeView === 'view-simulator') runSim();
-            if(activeView === 'view-client-portal') renderClientPortal();
-            if(activeView === 'view-alerts') renderAlerts();
+            if (activeView === 'view-monitor') renderMachines();
+            if (activeView === 'view-intervention') renderIntervention();
+            if (activeView === 'view-simulator') runSim();
+            if (activeView === 'view-client-portal') renderClientPortal();
+            if (activeView === 'view-alerts') renderAlerts();
         }
 
         // --- View Switching ---
         function switchView(viewId, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            
+            const viewEl = document.getElementById('view-' + viewId);
+            if (viewEl) viewEl.classList.add('active');
+
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            el.classList.add('active');
-            
-            const titleKey = el.querySelector('span').getAttribute('data-i18n');
-            const titleEl = document.getElementById('current-view-title');
-            titleEl.setAttribute('data-i18n', titleKey);
-            titleEl.textContent = i18n[currentLang][titleKey];
+            if (el) el.classList.add('active');
+
+            const titleSpan = el ? el.querySelector('span') : null;
+            if (titleSpan) {
+                const titleKey = titleSpan.getAttribute('data-i18n');
+                const titleEl = document.getElementById('current-view-title');
+                titleEl.setAttribute('data-i18n', titleKey);
+                titleEl.textContent = i18n[currentLang][titleKey];
+            }
 
             // Render specific content
-            if(viewId === 'monitor') renderMachines();
-            if(viewId === 'intervention') renderIntervention();
-            if(viewId === 'rfid') renderRFID();
-            if(viewId === 'client-portal') renderClientPortal();
-            if(viewId === 'simulator') runSim();
-            if(viewId === 'alerts') renderAlerts();
+            if (viewId === 'monitor') renderMachines();
+            if (viewId === 'intervention') renderIntervention();
+            if (viewId === 'rfid') renderRFID();
+            if (viewId === 'client-portal') renderClientPortal();
+            if (viewId === 'simulator') runSim();
+            if (viewId === 'alerts') renderAlerts();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebar-overlay').classList.toggle('active');
         }
 
         // --- Data & Components ---
@@ -1245,11 +1472,11 @@
                     if (m.progress >= 100) m.progress = 0;
                     m.temp = +(m.temp + (Math.random() * 0.4 - 0.2)).toFixed(1);
                     if (m.type === 'washer') m.ph = +(m.ph + (Math.random() * 0.1 - 0.05)).toFixed(2);
-                    
+
                     // Update DOM directly for smooth transitions
                     const monitorBar = document.querySelector(`.machine-card[data-id="${m.id}"] .bar-fill`);
                     if (monitorBar) monitorBar.style.width = m.progress + '%';
-                    
+
                     const interventionBar = document.querySelector(`.intervention-row[data-id="${m.id}"] .bar-fill-inner`);
                     if (interventionBar) interventionBar.style.width = m.progress + '%';
 
@@ -1371,7 +1598,7 @@
             document.getElementById('v-sim-water').textContent = water + ' L/kg';
             document.getElementById('v-sim-energy').textContent = energy + ' kWh';
 
-            const cMow = ops * 22 * (dur/60);
+            const cMow = ops * 22 * (dur / 60);
             const cEne = energy * 0.85;
             const cAgua = (water * kg / 1000) * 14;
             const cQuim = 0.18 * kg;
@@ -1382,7 +1609,7 @@
             document.getElementById('r-sim-kg').textContent = 'R$ ' + perKg.toFixed(2).replace('.', ',');
 
             const band = document.getElementById('sim-status-band');
-            if(perKg < 1.0) {
+            if (perKg < 1.0) {
                 band.style.background = 'rgba(16,185,129,0.2)';
                 band.style.color = 'var(--success)';
                 band.textContent = 'Custo dentro do benchmark (R$ 0,90 - 1,00/kg)';
@@ -1404,7 +1631,7 @@
         }
 
         function renderBar(label, val, total, color) {
-            const p = (val/total*100).toFixed(0);
+            const p = (val / total * 100).toFixed(0);
             return `
                 <div class="breakdown-row">
                     <span class="breakdown-label">${label}</span>
@@ -1418,7 +1645,7 @@
         function renderAlerts() {
             const p1 = document.getElementById('alerts-p1-list');
             const p2 = document.getElementById('alerts-p2-list');
-            
+
             const a1 = [
                 { t: 'Máquina Parada Não Planejada', m: 'LW-03 inativa há 8 min', d: 'Acionado manutenção automática via SCADA.' },
                 { t: 'SLA em Risco de Quebra', m: 'Lote 015 - Hospital Sta Cruz', d: 'Tempo projetado > prazo contratado em 22min.' }
@@ -1523,16 +1750,16 @@
 
         function updateLiveCharts() {
             if (!prodChart) return;
-            
+
             // Move production chart
             const lastVal = liveData.productionData[liveData.productionData.length - 1];
             const newVal = lastVal + (Math.random() * 40 - 15);
-            
+
             liveData.productionData.push(newVal);
             liveData.productionData.shift();
-            
+
             prodChart.data.datasets[0].data = [...liveData.productionData];
-            prodChart.update('none'); 
+            prodChart.update('none');
 
             // Update utility chart slightly
             if (utilChart) {
@@ -1636,7 +1863,7 @@
             renderMachines();
             setLanguage('pt');
             startSimulation();
-            
+
             // Initial animation
             animateValue('stat-oee-val', 0, 84.2, 2000, "%", 1);
             animateValue('stat-cycles-val', 0, 12, 1500);
@@ -1645,4 +1872,5 @@
         });
     </script>
 </body>
+
 </html>
