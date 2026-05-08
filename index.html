@@ -80,7 +80,17 @@
 
         .code-block { font-family: var(--font-mono); font-size: 0.75rem; background: #05070a; padding: 1rem; border-radius: 8px; color: #d1d5db; line-height: 1.5; border: 1px solid var(--border); }
         .kw { color: #93c5fd; } .fn { color: #bef264; } .str { color: #fdba74; }
-
+        /* Slider */
+        .sl { margin-bottom: 1rem; } .sl-row { display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:5px; } .sl-row b { color:var(--brand); }
+        input[type=range] { width:100%; accent-color:var(--brand); }
+        /* Schema */
+        .fr { display:flex; gap:10px; padding:6px 0; border-bottom:1px solid var(--border); align-items:baseline; }
+        .fn-name { font-weight:700; min-width:110px; font-size:0.8rem; }
+        .fn-type { font-family:var(--font-mono); color:var(--info); font-size:0.7rem; min-width:90px; }
+        .fn-desc { color:var(--text-tertiary); font-size:0.75rem; }
+        /* Cost bar */
+        .cbar { display:flex; gap:8px; align-items:center; margin-bottom:8px; font-size:0.8rem; }
+        .cbar-label { min-width:100px; color:var(--text-secondary); } .cbar-track { flex:1; height:6px; background:#161b22; border-radius:3px; overflow:hidden; } .cbar-fill { height:100%; border-radius:3px; } .cbar-val { min-width:60px; text-align:right; font-family:var(--font-mono); font-size:0.75rem; }
         @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); position: fixed; height: 100vh; } .sidebar.active { transform: translateX(0); } #mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 999; } }
     </style>
 </head>
@@ -156,46 +166,101 @@
 
             <!-- VIEW: RFID -->
             <div id="view-rfid" class="view">
-                <div class="premium-table-card"><table class="premium-table"><thead><tr><th>EPC</th><th>Tipo</th><th>Localização</th><th>Ciclos</th></tr></thead><tbody id="rfid-table"></tbody></table></div>
+                <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr);">
+                    <div class="metric-card"><span class="metric-label">Tags Ativas</span><div class="metric-value">1.240</div></div>
+                    <div class="metric-card"><span class="metric-label">Lidas Hoje</span><div class="metric-value">8.902</div></div>
+                    <div class="metric-card"><span class="metric-label">Erros de Leitura</span><div class="metric-value" style="color:var(--danger)">03</div></div>
+                    <div class="metric-card"><span class="metric-label">Precisão</span><div class="metric-value" style="color:var(--success)">99.7%</div></div>
+                </div>
+                <div class="metric-card" style="overflow-x:auto;">
+                    <table class="premium-table"><thead><tr><th>EPC Tag</th><th>Item</th><th>Cliente</th><th>Localização</th><th>Último Scan</th><th>Ciclos</th><th>Condição</th></tr></thead><tbody id="rfid-table"></tbody></table>
+                </div>
             </div>
 
             <!-- VIEW: CLIENT PORTAL -->
-            <div id="view-client-portal" class="view"><div id="client-batches"></div></div>
+            <div id="view-client-portal" class="view">
+                <div class="metrics-grid">
+                    <div class="metric-card"><span class="metric-label">Lotes em Processo</span><div class="metric-value">04</div></div>
+                    <div class="metric-card"><span class="metric-label">SLA Cumprido</span><div class="metric-value" style="color:var(--success)">98.2%</div></div>
+                    <div class="metric-card"><span class="metric-label">Peças Rastreadas</span><div class="metric-value">4.820</div></div>
+                    <div class="metric-card"><span class="metric-label">Clientes Ativos</span><div class="metric-value">12</div></div>
+                </div>
+                <div class="metric-card" style="overflow-x:auto;">
+                    <table class="premium-table"><thead><tr><th>Lote</th><th>Cliente</th><th>Peças</th><th>Fase</th><th>Prazo</th><th>SLA</th><th>Progresso</th></tr></thead><tbody id="client-table"></tbody></table>
+                </div>
+            </div>
 
             <!-- VIEW: SIMULATOR -->
             <div id="view-simulator" class="view">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                <div id="sim-status" style="padding:12px 20px;border-radius:10px;font-weight:700;text-align:center;margin-bottom:1.5rem;background:rgba(63,185,80,0.1);color:var(--success);">Custo dentro do benchmark ideal (R$ 0,90–1,20/kg)</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
                     <div class="metric-card">
-                        <h3>Simulação Dinâmica</h3>
-                        <div style="margin-top:1.5rem;">
-                            <label style="font-size:0.8rem;">Carga do Lote (kg)</label>
-                            <input type="range" id="sim-kg" min="10" max="200" value="100" style="width:100%;" oninput="runSim()">
-                            <div style="display:flex; justify-content:space-between; margin-top:5px;"><span id="v-kg">100kg</span><span>200kg</span></div>
-                        </div>
+                        <h3 style="margin-bottom:1.5rem;">Parâmetros do Ciclo</h3>
+                        <div class="sl"><div class="sl-row"><span>Carga do lote (kg)</span><b id="v-kg">100</b></div><input type="range" id="sim-kg" min="10" max="200" value="100" oninput="runSim()"></div>
+                        <div class="sl"><div class="sl-row"><span>Duração do ciclo (min)</span><b id="v-dur">45</b></div><input type="range" id="sim-dur" min="20" max="90" value="45" oninput="runSim()"></div>
+                        <div class="sl"><div class="sl-row"><span>Operadores alocados</span><b id="v-ops">2</b></div><input type="range" id="sim-ops" min="1" max="6" value="2" oninput="runSim()"></div>
+                        <div class="sl"><div class="sl-row"><span>Água consumida (L/kg)</span><b id="v-water">8</b></div><input type="range" id="sim-water" min="3" max="20" value="8" oninput="runSim()"></div>
+                        <div class="sl"><div class="sl-row"><span>Energia (kWh/ciclo)</span><b id="v-energy">12</b></div><input type="range" id="sim-energy" min="2" max="35" value="12" oninput="runSim()"></div>
+                        <div class="sl"><div class="sl-row"><span>Químicos (g/kg roupa)</span><b id="v-chem">8</b></div><input type="range" id="sim-chem" min="2" max="20" value="8" oninput="runSim()"></div>
                     </div>
                     <div class="metric-card">
-                        <h3>Custo Projetado</h3>
-                        <div class="metric-value" id="r-cost" style="font-size:3rem; color:var(--brand);">R$ 180,00</div>
+                        <h3 style="margin-bottom:1rem;">Resultado do Ciclo</h3>
+
+                        <!-- PRIMARY METRIC: custo por kg (eficiência) -->
+                        <div style="margin-bottom:0.5rem;">
+                            <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Custo por kg (eficiência) ↓ melhor</span>
+                        </div>
+                        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:0.25rem;">
+                            <div style="font-size:3rem;font-family:var(--font-mono);font-weight:800;color:var(--brand);" id="r-per-kg">R$ 0,00/kg</div>
+                            <div id="r-delta" style="font-size:0.85rem;font-weight:700;"></div>
+                        </div>
+
+                        <!-- SECONDARY: custo total do ciclo -->
+                        <div style="display:flex;gap:20px;margin-bottom:1.5rem;padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;">
+                            <div>
+                                <div style="font-size:0.65rem;color:var(--text-tertiary);text-transform:uppercase;">Total do Ciclo</div>
+                                <div style="font-family:var(--font-mono);font-weight:700;" id="r-total">R$ 0,00</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.65rem;color:var(--text-tertiary);text-transform:uppercase;">Custos Fixos</div>
+                                <div style="font-family:var(--font-mono);font-weight:700;color:var(--info);" id="r-fixed">R$ 0,00</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.65rem;color:var(--text-tertiary);text-transform:uppercase;">Custos Variáveis</div>
+                                <div style="font-family:var(--font-mono);font-weight:700;color:var(--warning);" id="r-var">R$ 0,00</div>
+                            </div>
+                        </div>
+
+                        <div id="cost-bars"></div>
+                        <div id="sim-insight" style="margin-top:1rem;padding:12px;background:var(--bg-accent);border-radius:8px;font-size:0.8rem;color:var(--text-secondary);line-height:1.6;"></div>
                     </div>
                 </div>
             </div>
 
             <!-- VIEW: ARCHITECTURE -->
             <div id="view-architecture" class="view">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.5rem;">
+                    <div class="metric-card" style="border-left:4px solid var(--brand);"><h4>TimescaleDB</h4><p style="font-size:0.8rem;color:var(--text-secondary);margin-top:6px;">Séries temporais de sensores em alta frequência. Retenção: 90 dias raw, permanente agregado.</p></div>
+                    <div class="metric-card" style="border-left:4px solid var(--success);"><h4>PostgreSQL</h4><p style="font-size:0.8rem;color:var(--text-secondary);margin-top:6px;">Dados mestres: clientes, contratos, itens RFID, ciclos. Rastreabilidade permanente.</p></div>
+                    <div class="metric-card" style="border-left:4px solid var(--warning);"><h4>AI/ML Engine</h4><p style="font-size:0.8rem;color:var(--text-secondary);margin-top:6px;">LSTM para previsão de falhas. XGBoost para otimização de carga. Atualização: diária.</p></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
                     <div class="metric-card">
-                        <h3>Estrutura de Dados (Telemetry)</h3>
-                        <div class="code-block">
-                            <span class="kw">CREATE TABLE</span> telemetry ( <br>
-                            &nbsp;&nbsp;ts <span class="fn">TIMESTAMPTZ</span>, <br>
-                            &nbsp;&nbsp;machine_id <span class="fn">TEXT</span>, <br>
-                            &nbsp;&nbsp;metrics <span class="fn">JSONB</span> (temp, vibr, rpm, flow) <br>
-                            );
+                        <h3 style="margin-bottom:1rem;">Schema: sensor_readings</h3>
+                        <div style="font-size:0.75rem;">
+                            <div class="fr"><span class="fn-name">time</span><span class="fn-type">TIMESTAMPTZ</span><span class="fn-desc">PK — índice temporal</span></div>
+                            <div class="fr"><span class="fn-name">machine_id</span><span class="fn-type">TEXT</span><span class="fn-desc">tag — partição</span></div>
+                            <div class="fr"><span class="fn-name">temp_c</span><span class="fn-type">DOUBLE</span><span class="fn-desc">Temperatura °C</span></div>
+                            <div class="fr"><span class="fn-name">vibration</span><span class="fn-type">DOUBLE</span><span class="fn-desc">Vibração mm/s²</span></div>
+                            <div class="fr"><span class="fn-name">rpm</span><span class="fn-type">INT</span><span class="fn-desc">Rotações por minuto</span></div>
+                            <div class="fr"><span class="fn-name">water_flow</span><span class="fn-type">DOUBLE</span><span class="fn-desc">Vazão L/min</span></div>
+                            <div class="fr"><span class="fn-name">power_kw</span><span class="fn-type">DOUBLE</span><span class="fn-desc">Consumo elétrico</span></div>
+                            <div class="fr"><span class="fn-name">ph</span><span class="fn-type">DOUBLE</span><span class="fn-desc">pH da solução</span></div>
                         </div>
                     </div>
                     <div class="metric-card">
-                        <h3>IA: Modelo Preditivo</h3>
-                        <p style="font-size:0.9rem; color:var(--text-secondary);">Rede Neural Recorrente (LSTM) analisando séries temporais de vibração para detectar falhas no rolamento principal.</p>
+                        <h3 style="margin-bottom:1rem;">Query: MTBF por Máquina</h3>
+                        <div class="code-block"><span class="kw">SELECT</span> machine_id,<br>&nbsp;&nbsp;<span class="fn">AVG</span>(gap_h) <span class="kw">AS</span> mtbf_horas<br><span class="kw">FROM</span> (<br>&nbsp;&nbsp;<span class="kw">SELECT</span> machine_id,<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">EXTRACT</span>(epoch <span class="kw">FROM</span> time - <span class="fn">LAG</span>(time)<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> machine_id <span class="kw">ORDER BY</span> time))/3600 gap_h<br>&nbsp;&nbsp;<span class="kw">FROM</span> machine_events<br>&nbsp;&nbsp;<span class="kw">WHERE</span> event_type=<span class="str">'alarm'</span><br>&nbsp;&nbsp;<span class="kw">AND</span> time &gt; <span class="fn">NOW</span>()-<span class="str">'30d'</span><br>) sub <span class="kw">GROUP BY</span> 1;</div>
                     </div>
                 </div>
             </div>
@@ -204,10 +269,26 @@
 
     <script>
         const machines = [
-            { id: 'TUN-01', name: 'Túnel Master 01', type: 'washer', status: 'running', temp: 65, vibr: 4.2, rpm: 1200, flow: 15.2, power: 12.5, progress: 65 },
-            { id: 'DRY-01', name: 'Secadora High-Flow 01', type: 'dryer', status: 'running', temp: 85, vibr: 2.1, rpm: 800, flow: 0, power: 18.2, progress: 22 },
-            { id: 'CAL-01', name: 'Calandra Flat-Press 01', type: 'ironer', status: 'warning', temp: 180, vibr: 8.5, rpm: 150, flow: 0, power: 8.4, progress: 95 },
-            { id: 'TUN-02', name: 'Túnel Master 02', type: 'washer', status: 'idle', temp: 22, vibr: 0.1, rpm: 0, flow: 0, power: 0.5, progress: 0 }
+            { id:'TUN-01', name:'Túnel Master 01', status:'running', temp:65, vibr:4.2, rpm:1200, flow:15.2, power:12.5, ph:8.2, progress:65 },
+            { id:'DRY-01', name:'Secadora High-Flow 01', status:'running', temp:85, vibr:2.1, rpm:800, flow:0, power:18.2, ph:0, progress:22 },
+            { id:'CAL-01', name:'Calandra Flat-Press 01', status:'warning', temp:180, vibr:8.5, rpm:150, flow:0, power:8.4, ph:0, progress:95 },
+            { id:'TUN-02', name:'Túnel Master 02', status:'idle', temp:22, vibr:0.1, rpm:0, flow:0, power:0.5, ph:7.0, progress:0 }
+        ];
+
+        const rfidTags = [
+            {epc:'E28011A1F0',item:'Lençol Casal',client:'Hosp. Santa Cruz',loc:'Saída Túnel 01',scan:'08:42',cycles:128,cond:'OK'},
+            {epc:'E28011A2B3',item:'Fronha Dupla',client:'Hotel Grand',loc:'Entrada Secadora',scan:'09:15',cycles:45,cond:'OK'},
+            {epc:'E28011C3D4',item:'Avental Cirúrgico',client:'Clínica Norte',loc:'Calandra',scan:'09:28',cycles:312,cond:'DESGASTE'},
+            {epc:'E28011D5E6',item:'Toalha Bath',client:'Hotel Grand',loc:'Saída RFID Gate 2',scan:'09:51',cycles:67,cond:'OK'},
+            {epc:'E28011F7G8',item:'Lençol Solteiro',client:'Hosp. Santa Cruz',loc:'Armazenamento',scan:'10:05',cycles:89,cond:'OK'},
+            {epc:'E28011H9I0',item:'Jaleco Médico',client:'Clínica Norte',loc:'Entrada Túnel 02',scan:'10:18',cycles:201,cond:'ATENÇÃO'}
+        ];
+
+        const clientBatches = [
+            {lot:'#1042',client:'Hosp. Santa Cruz',pcs:380,phase:'Lavagem',due:'10:30',sla:'OK',prog:45},
+            {lot:'#1043',client:'Hotel Grand Lux',pcs:220,phase:'Secagem',due:'11:00',sla:'OK',prog:70},
+            {lot:'#1044',client:'Clínica Norte',pcs:150,phase:'Passadoria',due:'11:30',sla:'RISCO',prog:88},
+            {lot:'#1045',client:'Pousada Beira Rio',pcs:95,phase:'Triagem',due:'12:00',sla:'OK',prog:12}
         ];
 
         function switchView(id, el) {
@@ -215,62 +296,180 @@
             document.getElementById('view-' + id).classList.add('active');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             if(el) el.classList.add('active');
-            document.getElementById('page-title').textContent = el ? el.textContent : id;
-            if(id==='monitor') renderMonitor(); if(id==='intervention') renderIntervention(); if(id==='rfid') renderRFID();
+            document.getElementById('page-title').textContent = el ? el.textContent.trim() : id;
+            if(id==='monitor') renderMonitor();
+            if(id==='intervention') renderIntervention();
+            if(id==='rfid') renderRFID();
+            if(id==='client-portal') renderClientPortal();
+            if(id==='simulator') runSim();
+            if(window.innerWidth<=1024) { const sb=document.getElementById('sidebar'); if(sb.classList.contains('active')) toggleMenu(); }
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('mobile-overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none'; }
 
         function renderMonitor() {
-            document.getElementById('monitor-grid').innerHTML = machines.map(m => `
-                <div class="m-card">
-                    <div class="m-header"><b>${m.name}</b><span style="color:var(--${m.status==='running'?'success':m.status==='warning'?'warning':'text-secondary'})">${m.status.toUpperCase()}</span></div>
+            document.getElementById('monitor-grid').innerHTML = machines.map(m => {
+                const sc = m.status==='running'?'success':m.status==='warning'?'warning':'text-secondary';
+                const alert = m.vibr>6 ? `<span style="font-size:0.7rem;color:var(--danger);margin-left:8px;">⚠ VIBR ALTA</span>` : '';
+                return `<div class="m-card" data-machine-id="${m.id}">
+                    <div class="m-header"><b>${m.name}${alert}</b><span style="color:var(--${sc})">${m.status.toUpperCase()}</span></div>
                     <div class="m-body">
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                            <div class="tele-item"><span class="tele-label">TEMP</span><span class="tele-val">${m.temp}°C</span></div>
-                            <div class="tele-item"><span class="tele-label">VIBR</span><span class="tele-val">${m.vibr} mm/s</span></div>
-                            <div class="tele-item"><span class="tele-label">RPM</span><span class="tele-val">${m.rpm}</span></div>
-                            <div class="tele-item"><span class="tele-label">POWER</span><span class="tele-val">${m.power} kW</span></div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem;">
+                            <div class="tele-item"><span class="tele-label">TEMP</span><span class="tele-val" style="color:${m.temp>150?'var(--danger)':'inherit'}">${m.temp.toFixed(1)}°C</span></div>
+                            <div class="tele-item"><span class="tele-label">VIBR</span><span class="tele-val" style="color:${m.vibr>6?'var(--danger)':m.vibr>4?'var(--warning)':'inherit'}">${m.vibr.toFixed(1)} mm/s</span></div>
+                            <div class="tele-item"><span class="tele-label">RPM</span><span class="tele-val">${Math.round(m.rpm)}</span></div>
+                            <div class="tele-item"><span class="tele-label">FLUXO</span><span class="tele-val">${m.flow.toFixed(1)} L/min</span></div>
+                            <div class="tele-item"><span class="tele-label">POWER</span><span class="tele-val">${m.power.toFixed(1)} kW</span></div>
+                            <div class="tele-item"><span class="tele-label">pH</span><span class="tele-val" style="color:${m.ph>9||m.ph<6.5?'var(--warning)':'inherit'}">${m.ph||'N/A'}</span></div>
                         </div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px;"><span>Progresso do lote</span><span>${Math.round(m.progress)}%</span></div>
                         <div class="p-track"><div class="p-fill" id="pb-${m.id}" style="width:${m.progress}%"></div></div>
-                    </div>
-                </div>
-            `).join('');
+                    </div></div>`;
+            }).join('');
         }
 
         function renderIntervention() {
-            document.getElementById('intervention-table').innerHTML = machines.map(m => `
-                <tr>
-                    <td><b>${m.name}</b></td>
-                    <td style="color:var(--${m.status==='running'?'success':m.status==='warning'?'warning':'text-secondary'})">${m.status}</td>
-                    <td>${m.vibr > 5 ? '<span style="color:var(--danger)">ALTA</span>' : 'Normal'}</td>
-                    <td style="display:flex; gap:8px;">
-                        <button class="btn btn-danger" onclick="action('${m.id}', 'STOP')"><i data-lucide="square" size="14"></i></button>
-                        <button class="btn btn-warning" onclick="action('${m.id}', 'DRAIN')"><i data-lucide="droplets" size="14"></i></button>
-                        <button class="btn btn-info" onclick="action('${m.id}', 'BOOST')"><i data-lucide="zap" size="14"></i></button>
-                        <button class="btn btn-success" onclick="action('${m.id}', 'RESET')"><i data-lucide="refresh-cw" size="14"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-            lucide.createIcons();
+            document.getElementById('intervention-table').innerHTML = machines.map(m => {
+                const sc = m.status==='running'?'success':m.status==='warning'?'danger':'text-secondary';
+                const alert = m.vibr>6?'<b style="color:var(--danger)">CRÍTICA</b>':m.vibr>4?'<span style="color:var(--warning)">ATENÇÃO</span>':'<span style="color:var(--success)">NORMAL</span>';
+                return `<tr>
+                    <td><b>${m.name}</b><br><small style="color:var(--text-tertiary)">${m.id}</small></td>
+                    <td><span style="color:var(--${sc})">${m.status}</span></td>
+                    <td>T:${m.temp}°C | V:${m.vibr}mm/s | ${m.power}kW</td>
+                    <td>${alert}</td>
+                    <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <button class="btn btn-danger" title="Parada de Emergência" onclick="doAction('${m.id}','EMERGENCY STOP')">🛑 STOP</button>
+                        <button class="btn" style="color:var(--info)" title="Drenar tanque" onclick="doAction('${m.id}','DRAIN')">💧 DRENAR</button>
+                        <button class="btn" style="color:var(--warning)" title="Boost térmico" onclick="doAction('${m.id}','BOOST')">⚡ BOOST</button>
+                        <button class="btn btn-success" title="Reset PLC" onclick="doAction('${m.id}','PLC RESET')">🔄 RESET</button>
+                        <button class="btn" title="Modo manutenção" onclick="doAction('${m.id}','MANUTENÇÃO')">🔧 MAINT</button>
+                        <button class="btn" title="Ajustar dosagem" onclick="doAction('${m.id}','DOSAGEM')">🧪 DOSAGEM</button>
+                    </div></td>
+                </tr>`;
+            }).join('');
         }
 
-        function action(id, type) {
-            alert(`Comando ${type} enviado para ${id}`);
+        function doAction(id, type) {
             const log = document.getElementById('intervention-log');
-            log.innerHTML = `<p>[${new Date().toLocaleTimeString()}] COMANDO ${type} -> ${id} EXECUTADO COM SUCESSO.</p>` + log.innerHTML;
+            const color = type.includes('STOP')?'var(--danger)':type.includes('BOOST')?'var(--warning)':'var(--success)';
+            log.innerHTML = `<div style="padding:8px 12px;border-left:3px solid ${color};margin-bottom:8px;background:rgba(0,0,0,0.2);border-radius:0 6px 6px 0;">
+                <b style="color:${color}">${type}</b> → ${id} &nbsp;<span style="color:var(--text-tertiary)">${new Date().toLocaleTimeString()}</span></div>` + log.innerHTML;
         }
 
         function renderRFID() {
-            document.getElementById('rfid-table').innerHTML = machines.slice(0,3).map((m, i) => `
-                <tr><td>E28011F${i}A</td><td>Lençol Casal</td><td>Checkpoint ${i+1}</td><td>${20+i} lavagens</td></tr>
-            `).join('');
+            document.getElementById('rfid-table').innerHTML = rfidTags.map(t => {
+                const condColor = t.cond==='OK'?'var(--success)':t.cond==='DESGASTE'?'var(--danger)':'var(--warning)';
+                return `<tr><td style="font-family:var(--font-mono);font-size:0.75rem">${t.epc}</td><td>${t.item}</td><td>${t.client}</td><td>${t.loc}</td><td>${t.scan}</td><td>${t.cycles}</td><td style="color:${condColor}">${t.cond}</td></tr>`;
+            }).join('');
+        }
+
+        function renderClientPortal() {
+            document.getElementById('client-table').innerHTML = clientBatches.map(b => {
+                const slaColor = b.sla==='OK'?'var(--success)':'var(--danger)';
+                return `<tr><td><b>${b.lot}</b></td><td>${b.client}</td><td>${b.pcs}</td><td>${b.phase}</td><td>${b.due}</td><td style="color:${slaColor};font-weight:700">${b.sla}</td><td><div class="p-track" style="min-width:80px"><div class="p-fill" style="width:${b.prog}%"></div></div></td></tr>`;
+            }).join('');
         }
 
         function runSim() {
-            const kg = +document.getElementById('sim-kg').value;
-            document.getElementById('v-kg').textContent = kg + 'kg';
-            document.getElementById('r-cost').textContent = 'R$ ' + (kg * 1.8).toFixed(2).replace('.', ',');
+            const kg     = +document.getElementById('sim-kg').value;
+            const dur    = +document.getElementById('sim-dur').value;   // minutos
+            const ops    = +document.getElementById('sim-ops').value;
+            const water  = +document.getElementById('sim-water').value; // L/kg
+            const energy = +document.getElementById('sim-energy').value; // kWh/ciclo
+            const chem   = +document.getElementById('sim-chem').value;  // g/kg
+
+            // Update display labels
+            document.getElementById('v-kg').textContent    = kg + ' kg';
+            document.getElementById('v-dur').textContent   = dur + ' min';
+            document.getElementById('v-ops').textContent   = ops;
+            document.getElementById('v-water').textContent = water + ' L/kg';
+            document.getElementById('v-energy').textContent = energy + ' kWh';
+            document.getElementById('v-chem').textContent  = chem + ' g/kg';
+
+            // --- Fórmulas com tarifas realistas Brasil 2025 ---
+            // Mão de Obra: R$18/h por operador
+            const cMao  = ops * 18 * (dur / 60);
+            // Energia: R$0,72/kWh (tarifa B2 industrial média SP)
+            const cEne  = energy * 0.72;
+            // Água: consumo total (L) ÷ 1000 → m³ × R$18/m³ (tarifa industrial)
+            const cAgua = (water * kg / 1000) * 18;
+            // Químicos: g/kg × kg total ÷ 1000 → kg produto × R$12/kg produto
+            const cQuim = (chem / 1000) * kg * 12;
+            // Gás/Vapor: R$0,08 por minuto de operação
+            const cGas  = dur * 0.08;
+            // Depreciação: R$0,30 por minuto (amortização equipamento ~R$1.8k/mês)
+            const cDep  = dur * 0.30;
+
+            const total = cMao + cEne + cAgua + cQuim + cGas + cDep;
+            const perKg = total / kg;
+
+            // Fixed costs (don't scale with kg) vs variable costs (scale with kg)
+            const fixedCosts = cMao + cEne + cGas + cDep;
+            const varCosts   = cAgua + cQuim;
+
+            // Delta from last calculation
+            const prevPerKg = window._lastPerKg || perKg;
+            const delta = perKg - prevPerKg;
+            window._lastPerKg = perKg;
+
+            document.getElementById('r-per-kg').textContent = 'R$ ' + perKg.toFixed(2).replace('.', ',') + '/kg';
+            document.getElementById('r-total').textContent  = 'R$ ' + total.toFixed(2).replace('.', ',');
+            document.getElementById('r-fixed').textContent  = 'R$ ' + fixedCosts.toFixed(2).replace('.', ',');
+            document.getElementById('r-var').textContent    = 'R$ ' + varCosts.toFixed(2).replace('.', ',');
+
+            const deltaEl = document.getElementById('r-delta');
+            if (deltaEl && Math.abs(delta) > 0.001) {
+                const improved = delta < 0;
+                deltaEl.textContent = (improved ? '▼ ' : '▲ ') + Math.abs(delta).toFixed(3).replace('.', ',') + '/kg';
+                deltaEl.style.color = improved ? 'var(--success)' : 'var(--danger)';
+            } else if (deltaEl) { deltaEl.textContent = ''; }
+
+            // Breakdown bars — usando slice() para não mutar o array original
+            const bars = [
+                { l: 'Mão de Obra', v: cMao,  c: '#2f81f7' },
+                { l: 'Energia',     v: cEne,   c: '#d29922' },
+                { l: 'Água',        v: cAgua,  c: '#06b6d4' },
+                { l: 'Químicos',    v: cQuim,  c: '#8b5cf6' },
+                { l: 'Gás/Vapor',   v: cGas,   c: '#f85149' },
+                { l: 'Depreciação', v: cDep,   c: '#3fb950' }
+            ];
+
+            document.getElementById('cost-bars').innerHTML = bars.map(b => {
+                const pct = total > 0 ? (b.v / total * 100).toFixed(1) : 0;
+                return `<div class="cbar">
+                    <span class="cbar-label">${b.l}</span>
+                    <div class="cbar-track"><div class="cbar-fill" style="width:${pct}%;background:${b.c}"></div></div>
+                    <span class="cbar-val" style="color:${b.c}">R$${b.v.toFixed(2)} <span style="color:var(--text-tertiary)">(${pct}%)</span></span>
+                </div>`;
+            }).join('');
+
+            // Status benchmark (sem mutar bars)
+            const sb = document.getElementById('sim-status');
+            if (perKg < 0.90) {
+                sb.style.background = 'rgba(248,81,73,0.1)'; sb.style.color = 'var(--danger)';
+                sb.textContent = '⚠ Custo abaixo do breakeven — verifique os parâmetros inseridos';
+            } else if (perKg <= 1.50) {
+                sb.style.background = 'rgba(63,185,80,0.1)'; sb.style.color = 'var(--success)';
+                sb.textContent = '✓ Custo dentro do benchmark industrial (R$ 0,90 – 1,50/kg)';
+            } else {
+                sb.style.background = 'rgba(210,153,34,0.1)'; sb.style.color = 'var(--warning)';
+                sb.textContent = '⚠ Custo acima do benchmark — otimize a carga ou reduza a duração';
+            }
+
+            // Insight: usar cópia ordenada para não corromper o array
+            const sorted = bars.slice().sort((a, b) => b.v - a.v);
+            const topItem = sorted[0];
+            const topPct  = (topItem.v / total * 100).toFixed(0);
+            let tip = '';
+            if (topItem.l === 'Mão de Obra') tip = `⬆ Carga maior dilui este custo fixo. Com ${kg}kg, M.O. representa apenas ${topPct}% — aumente para 150kg+ para maximizar eficiência.`;
+            else if (topItem.l === 'Energia')  tip = 'Revise o perfil de temperatura — pico energético no aquecimento.';
+            else if (topItem.l === 'Água')     tip = 'Implemente recirculação de água para reduzir consumo por kg.';
+            else if (topItem.l === 'Químicos') tip = 'Dosagem automática pode reduzir desperdício em até 20%.';
+            else if (topItem.l === 'Depreciação') tip = `⬆ Carga maior dilui este custo fixo. Com ${kg}kg, depreciação cai para R$${(cDep/kg).toFixed(3)}/kg.`;
+            else tip = 'Considere caldeira a biomassa para reduzir custo de vapor.';
+
+            document.getElementById('sim-insight').innerHTML =
+                `<b>📌 Lógica do Simulador:</b> custos fixos (M.O., energia, gás, depreciação = <b>R$${fixedCosts.toFixed(2)}</b>) se diluem com mais carga. Custos variáveis (água, químicos = <b>R$${varCosts.toFixed(2)}</b>) escalam com o peso — mas menos que a diluição.<br><br><b>💡 ${tip}</b>`;
         }
 
         function initCharts() {
@@ -279,12 +478,112 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons(); initCharts();
-            setInterval(() => {
-                machines.forEach(m => { if(m.status==='running'){ m.progress += 0.5; if(m.progress>100) m.progress=0; const b=document.getElementById('pb-'+m.id); if(b) b.style.width=m.progress+'%'; } });
-            }, 2000);
-            if(window.innerWidth<=1024) document.getElementById('menu-btn').style.display='block';
+            lucide.createIcons();
+            initCharts();
+            if (window.innerWidth <= 1024) document.getElementById('menu-btn').style.display = 'block';
+            runSim(); // initial render
+            startLiveSimulation();
         });
+
+        // ── Live Simulation Engine ──────────────────────────────────────────
+        function startLiveSimulation() {
+
+            // Helper: clamp a value between min and max
+            const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+            // Helper: add random delta within ±range
+            const jitter = (v, range) => v + (Math.random() * 2 - 1) * range;
+
+            // 1. Machine telemetry tick — every 2s
+            setInterval(() => {
+                machines.forEach(m => {
+                    if (m.status === 'running') {
+                        m.progress = clamp(m.progress + 0.6 + Math.random() * 0.4, 0, 100);
+                        if (m.progress >= 100) { m.progress = 0; } // new batch
+
+                        m.temp  = clamp(jitter(m.temp, 1.5),  40, 95);
+                        m.vibr  = clamp(jitter(m.vibr, 0.3),  0.5, 9.9);
+                        m.rpm   = clamp(jitter(m.rpm, 30),    400, 1500);
+                        m.flow  = clamp(jitter(m.flow, 0.8),  5,  25);
+                        m.power = clamp(jitter(m.power, 0.5), 5,  25);
+                        if (m.ph) m.ph = clamp(jitter(m.ph, 0.05), 6.5, 9.5);
+                    }
+                    if (m.status === 'warning') {
+                        // Warning machines have more volatile readings
+                        m.temp  = clamp(jitter(m.temp, 3), 120, 200);
+                        m.vibr  = clamp(jitter(m.vibr, 0.6), 5, 12);
+                    }
+                    // Update monitor bars if visible
+                    const bar = document.getElementById('pb-' + m.id);
+                    if (bar) bar.style.width = m.progress + '%';
+
+                    // Update monitor tele-vals if card visible
+                    const card = document.querySelector(`[data-machine-id="${m.id}"]`);
+                    if (card) {
+                        const vals = card.querySelectorAll('.tele-val');
+                        if (vals[0]) { vals[0].textContent = m.temp.toFixed(1) + '°C'; vals[0].style.color = m.temp > 150 ? 'var(--danger)' : ''; }
+                        if (vals[1]) { vals[1].textContent = m.vibr.toFixed(1) + ' mm/s'; vals[1].style.color = m.vibr > 6 ? 'var(--danger)' : m.vibr > 4 ? 'var(--warning)' : ''; }
+                        if (vals[2]) vals[2].textContent = Math.round(m.rpm);
+                        if (vals[3]) vals[3].textContent = m.flow.toFixed(1) + ' L/min';
+                        if (vals[4]) vals[4].textContent = m.power.toFixed(1) + ' kW';
+                        if (vals[5]) vals[5].textContent = m.ph ? m.ph.toFixed(2) : 'N/A';
+                    }
+                });
+            }, 2000);
+
+            // 2. Dashboard KPIs — every 4s
+            setInterval(() => {
+                const oee = clamp(jitter(84.2, 0.8), 79, 92);
+                const water = clamp(jitter(4.2, 0.15), 3.5, 5.5);
+                const cycles = Math.round(clamp(jitter(12, 1), 8, 16));
+
+                const oeeEl = document.getElementById('val-oee');
+                const waterEl = document.getElementById('val-water');
+                const cyclesEl = document.getElementById('val-cycles');
+
+                if (oeeEl) { oeeEl.textContent = oee.toFixed(1) + '%'; flashEl(oeeEl); }
+                if (waterEl) { waterEl.textContent = water.toFixed(1) + 'm³'; flashEl(waterEl); }
+                if (cyclesEl) { cyclesEl.textContent = cycles; }
+
+                // Push live point to production chart
+                if (window.liveChartRef) {
+                    const newVal = clamp(jitter(950, 80), 300, 1400);
+                    window.liveChartRef.data.datasets[0].data.push(newVal);
+                    window.liveChartRef.data.datasets[0].data.shift();
+                    window.liveChartRef.update('none');
+                }
+            }, 4000);
+
+            // 3. Simulator auto-pilot — every 5s (only re-calcs, doesn't move sliders)
+            setInterval(() => {
+                const simView = document.getElementById('view-simulator');
+                if (!simView || !simView.classList.contains('active')) return;
+
+                // Nudge sliders slightly to simulate real process variation
+                const nudge = (id, delta, min, max) => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    el.value = clamp(jitter(+el.value, delta), min, max);
+                };
+
+                nudge('sim-energy', 0.8, 2, 35);   // energy varies ±0.8 kWh
+                nudge('sim-water',  0.3, 3, 20);    // water ±0.3 L/kg
+                nudge('sim-chem',   0.5, 2, 20);    // chemicals ±0.5 g/kg
+
+                runSim(); // recalculate with new values
+
+                // Flash the total cost to signal update
+                const totalEl = document.getElementById('r-total');
+                if (totalEl) flashEl(totalEl);
+            }, 5000);
+        }
+
+        // Visual flash on update
+        function flashEl(el) {
+            el.style.transition = 'opacity 0.15s';
+            el.style.opacity = '0.3';
+            setTimeout(() => { el.style.opacity = '1'; }, 150);
+        }
+
     </script>
 </body>
 </html>
