@@ -10,214 +10,111 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Refined Industrial Palette */
             --bg-deep: #05070a;
             --bg-surface: #0d1117;
             --bg-card: rgba(22, 27, 34, 0.6);
             --bg-accent: #1c2128;
-            
             --text-primary: #f0f6fc;
             --text-secondary: #8b949e;
             --text-tertiary: #484f58;
-            
             --brand: #2f81f7;
             --brand-glow: rgba(47, 129, 247, 0.4);
             --success: #3fb950;
             --warning: #d29922;
             --danger: #f85149;
             --info: #388bfd;
-            
             --border: rgba(240, 246, 252, 0.1);
-            --border-heavy: rgba(240, 246, 252, 0.2);
-            
             --sidebar-width: 280px;
             --header-height: 80px;
-            
             --font-main: 'Plus Jakarta Sans', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-main); background-color: var(--bg-deep); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
 
-        body {
-            font-family: var(--font-main);
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* --- Sidebar --- */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--bg-surface);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 2rem 1.5rem;
-            z-index: 1000;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 3rem;
-        }
-
-        .logo-box {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--brand), #1d4ed8);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        .sidebar { width: var(--sidebar-width); background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 2rem 1.5rem; z-index: 1000; transition: transform 0.3s ease; }
+        .logo-section { display: flex; align-items: center; gap: 14px; margin-bottom: 3rem; }
+        .logo-box { width: 42px; height: 42px; background: linear-gradient(135deg, var(--brand), #1d4ed8); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; }
         .logo-text { font-size: 1.5rem; font-weight: 800; color: white; }
 
-        .nav-group { margin-bottom: 2rem; }
-        .nav-heading { font-size: 0.7rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem; margin-left: 0.75rem; }
-        
-        .nav-link {
-            display: flex; align-items: center; gap: 12px; padding: 0.85rem 1rem; color: var(--text-secondary); text-decoration: none; border-radius: var(--radius-md); transition: all 0.2s; cursor: pointer; font-size: 0.95rem; font-weight: 500; margin-bottom: 4px;
-        }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 0.85rem 1rem; color: var(--text-secondary); text-decoration: none; border-radius: var(--radius-md); transition: all 0.2s; cursor: pointer; font-size: 0.95rem; font-weight: 500; margin-bottom: 4px; }
         .nav-link:hover { background-color: var(--bg-accent); color: var(--text-primary); }
         .nav-link.active { background-color: rgba(47, 129, 247, 0.1); color: var(--brand); font-weight: 600; border-right: 3px solid var(--brand); }
 
         .main-container { flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
-
-        header {
-            height: var(--header-height);
-            background: rgba(13, 17, 23, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: env(safe-area-inset-top, 0) 2rem 0 2rem;
-            flex-shrink: 0; z-index: 100;
-        }
-
-        .header-title-area { display: flex; align-items: center; gap: 1rem; padding-top: 10px; }
-        .header-actions { display: flex; align-items: center; gap: 1.5rem; padding-top: 10px; }
-
-        .view-content { flex: 1; padding: 2.5rem; overflow-y: auto; background: linear-gradient(180deg, #0d1117 0%, #05070a 100%); }
-        .view { display: none; animation: slideIn 0.4s ease-out; }
+        header { height: var(--header-height); background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: env(safe-area-inset-top, 0) 2rem 0 2rem; z-index: 100; }
+        .view-content { flex: 1; padding: 2rem; overflow-y: auto; background: linear-gradient(180deg, #0d1117 0%, #05070a 100%); }
+        .view { display: none; animation: slideIn 0.3s ease-out; }
         .view.active { display: block; }
-
         @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- Components --- */
-        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
-        .metric-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; transition: all 0.3s; }
-        .metric-card:hover { border-color: var(--brand); transform: translateY(-4px); }
-        .metric-label { color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem; display: block; }
-        .metric-value { font-family: var(--font-mono); font-size: 2.2rem; font-weight: 700; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
+        .metric-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+        .metric-label { color: var(--text-secondary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+        .metric-value { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 700; }
 
-        .premium-table-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; overflow-x: auto; margin-bottom: 1.5rem; }
-        .premium-table { width: 100%; border-collapse: collapse; }
-        .premium-table th { text-align: left; padding: 12px 16px; font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; border-bottom: 1px solid var(--border); }
-        .premium-table td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-
-        .machine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        .machine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
         .m-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-        .m-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
-        .m-body { padding: 1.5rem; }
-        .p-track { height: 8px; background: #161b22; border-radius: 4px; overflow: hidden; margin-top: 1rem; }
-        .p-fill { height: 100%; background: linear-gradient(90deg, var(--brand), var(--info)); transition: width 0.8s ease; }
+        .m-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .m-body { padding: 1.25rem; }
+        .tele-item { background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 6px; display: flex; flex-direction: column; gap: 2px; }
+        .tele-label { font-size: 0.65rem; color: var(--text-secondary); font-weight: 600; }
+        .tele-val { font-family: var(--font-mono); font-size: 1rem; font-weight: 600; }
 
-        /* --- Simulator --- */
-        .slider-group { margin-bottom: 1.5rem; }
-        .slider-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
-        input[type=range] { width: 100%; accent-color: var(--brand); }
+        .p-track { height: 6px; background: #161b22; border-radius: 3px; overflow: hidden; margin-top: 1rem; }
+        .p-fill { height: 100%; background: var(--brand); transition: width 0.5s ease; }
 
-        /* --- Architecture View Styles --- */
-        .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-        .code-block { font-family: var(--font-mono); font-size: 0.8rem; background: #05070a; padding: 1rem; border-radius: 8px; color: #d1d5db; overflow-x: auto; line-height: 1.6; border: 1px solid var(--border); }
+        .btn { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-accent); color: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn:hover { border-color: var(--brand); }
+        .btn-danger { color: var(--danger); }
+        .btn-success { color: var(--success); }
+        .btn-info { color: var(--info); }
+
+        .premium-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .premium-table th { text-align: left; padding: 12px; font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        .premium-table td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+
+        .code-block { font-family: var(--font-mono); font-size: 0.75rem; background: #05070a; padding: 1rem; border-radius: 8px; color: #d1d5db; line-height: 1.5; border: 1px solid var(--border); }
         .kw { color: #93c5fd; } .fn { color: #bef264; } .str { color: #fdba74; }
 
-        /* --- Mobile --- */
-        @media (max-width: 1024px) {
-            .sidebar { transform: translateX(-100%); position: fixed; height: 100vh; }
-            .sidebar.active { transform: translateX(0); }
-            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-            #mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 999; }
-        }
-        @media (max-width: 768px) {
-            .metrics-grid { grid-template-columns: 1fr; }
-            .arch-grid { grid-template-columns: 1fr; }
-            header { height: 100px; padding: 0 1.5rem; }
-        }
-
-        .action-btn { background: var(--bg-accent); border: 1px solid var(--border); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
-        .action-btn:hover { border-color: var(--brand); }
+        @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); position: fixed; height: 100vh; } .sidebar.active { transform: translateX(0); } #mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 999; } }
     </style>
 </head>
 
 <body>
     <div id="mobile-overlay" onclick="toggleMenu()"></div>
-
     <aside class="sidebar" id="sidebar">
-        <div class="logo-section">
-            <div class="logo-box"><i data-lucide="waves" color="white" size="24"></i></div>
-            <span class="logo-text">LAVAÍ</span>
-        </div>
-
+        <div class="logo-section"><div class="logo-box"><i data-lucide="waves" color="white" size="24"></i></div><span class="logo-text">LAVAÍ</span></div>
         <nav style="flex:1">
             <div class="nav-group">
-                <p class="nav-heading" data-i18n="nav_op_control">Operação & Controle</p>
-                <a class="nav-link active" onclick="switchView('dashboard', this)">
-                    <i data-lucide="layout-grid" size="20"></i><span data-i18n="nav_dashboard">Dashboard</span>
-                </a>
-                <a class="nav-link" onclick="switchView('monitor', this)">
-                    <i data-lucide="activity" size="20"></i><span data-i18n="nav_monitor">Monitoramento</span>
-                </a>
-                <a class="nav-link" onclick="switchView('intervention', this)">
-                    <i data-lucide="shield-alert" size="20"></i><span data-i18n="nav_intervention">Intervenção</span>
-                </a>
-                <a class="nav-link" onclick="switchView('rfid', this)">
-                    <i data-lucide="rss" size="20"></i><span data-i18n="nav_rfid">Rastreamento RFID</span>
-                </a>
+                <p class="nav-heading">Comando Industrial</p>
+                <a class="nav-link active" onclick="switchView('dashboard', this)"><i data-lucide="layout-grid" size="20"></i>Dashboard</a>
+                <a class="nav-link" onclick="switchView('monitor', this)"><i data-lucide="activity" size="20"></i>Monitoramento</a>
+                <a class="nav-link" onclick="switchView('intervention', this)"><i data-lucide="shield-alert" size="20"></i>Intervenção</a>
+                <a class="nav-link" onclick="switchView('rfid', this)"><i data-lucide="rss" size="20"></i>Rastreio RFID</a>
             </div>
-
             <div class="nav-group">
-                <p class="nav-heading" data-i18n="nav_mgmt_ai">Gestão & Inteligência</p>
-                <a class="nav-link" onclick="switchView('client-portal', this)">
-                    <i data-lucide="users" size="20"></i><span data-i18n="nav_client_portal">Portal do Cliente</span>
-                </a>
-                <a class="nav-link" onclick="switchView('simulator', this)">
-                    <i data-lucide="trending-up" size="20"></i><span data-i18n="nav_simulator">Simulador Fin.</span>
-                </a>
-                <a class="nav-link" onclick="switchView('alerts', this)">
-                    <i data-lucide="bell" size="20"></i><span data-i18n="nav_alerts">Motor de Alertas</span>
-                </a>
-                <a class="nav-link" onclick="switchView('architecture', this)">
-                    <i data-lucide="database" size="20"></i><span data-i18n="nav_architecture">Arquitetura Dados</span>
-                </a>
+                <p class="nav-heading">Inteligência & IA</p>
+                <a class="nav-link" onclick="switchView('client-portal', this)"><i data-lucide="users" size="20"></i>Portal do Cliente</a>
+                <a class="nav-link" onclick="switchView('simulator', this)"><i data-lucide="trending-up" size="20"></i>Simulador de Custo</a>
+                <a class="nav-link" onclick="switchView('architecture', this)"><i data-lucide="database" size="20"></i>Arquitetura de Dados</a>
             </div>
         </nav>
     </aside>
 
     <div class="main-container">
         <header>
-            <div class="header-title-area">
-                <button class="action-btn" id="menu-btn" style="padding:10px; border:none; background:transparent; display:none;" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
-                <h1 id="page-title" class="logo-text" style="font-size:1.5rem; color:var(--text-primary);">Dashboard</h1>
+            <div style="display:flex; align-items:center; gap:1rem;">
+                <button class="btn" id="menu-btn" style="padding:10px; border:none; background:transparent; display:none;" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+                <h1 id="page-title" style="font-size:1.5rem; font-weight:800;">Dashboard</h1>
             </div>
-            <div class="header-actions">
-                <select id="lang-select" onchange="setLanguage(this.value)" style="background:var(--bg-accent); border:1px solid var(--border); color:white; padding:6px 12px; border-radius:8px;">
-                    <option value="pt">PT</option><option value="en">EN</option><option value="tr">TR</option>
+            <div style="display:flex; align-items:center; gap:1.5rem;">
+                <select onchange="setLanguage(this.value)" style="background:var(--bg-accent); border:1px solid var(--border); color:white; padding:6px 12px; border-radius:8px;">
+                    <option value="pt">PT</option><option value="en">EN</option>
                 </select>
                 <div style="width:36px; height:36px; background:var(--brand); border-radius:10px; display:flex; align-items:center; justify-content:center;"><i data-lucide="user" color="white" size="18"></i></div>
             </div>
@@ -227,82 +124,78 @@
             <!-- VIEW: DASHBOARD -->
             <div id="view-dashboard" class="view active">
                 <div class="metrics-grid">
-                    <div class="metric-card"><span class="metric-label" data-i18n="stat_oee">OEE GLOBAL</span><div class="metric-value" id="val-oee">84.2%</div></div>
-                    <div class="metric-card"><span class="metric-label" data-i18n="stat_active_cycles">CICLOS ATIVOS</span><div class="metric-value" id="val-cycles">12</div></div>
-                    <div class="metric-card"><span class="metric-label" data-i18n="stat_water_cons">CONSUMO ÁGUA</span><div class="metric-value" id="val-water">4.2m³</div></div>
-                    <div class="metric-card"><span class="metric-label" data-i18n="stat_alarms">ALERTAS ATIVOS</span><div class="metric-value" id="val-alerts" style="color:var(--warning)">02</div></div>
+                    <div class="metric-card"><span class="metric-label">OEE GLOBAL</span><div class="metric-value" id="val-oee">84.2%</div></div>
+                    <div class="metric-card"><span class="metric-label">CICLOS ATIVOS</span><div class="metric-value" id="val-cycles">12</div></div>
+                    <div class="metric-card"><span class="metric-label">ENERGIA (kW)</span><div class="metric-value">42.8</div></div>
+                    <div class="metric-card"><span class="metric-label">CONSUMO H2O</span><div class="metric-value">4.2m³</div></div>
+                    <div class="metric-card"><span class="metric-label">MTBF PROJETADO</span><div class="metric-value">182h</div></div>
                 </div>
-                <div class="arch-grid">
-                    <div class="metric-card" style="height: 350px;"><canvas id="prodChart"></canvas></div>
-                    <div class="metric-card" style="height: 350px;"><canvas id="utilChart"></canvas></div>
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem;">
+                    <div class="metric-card" style="height:350px;"><canvas id="prodChart"></canvas></div>
+                    <div class="metric-card" style="height:350px;"><canvas id="utilChart"></canvas></div>
                 </div>
             </div>
 
             <!-- VIEW: MONITOR -->
-            <div id="view-monitor" class="view"><div class="machine-grid" id="machine-monitor-grid"></div></div>
+            <div id="view-monitor" class="view"><div class="machine-grid" id="monitor-grid"></div></div>
 
             <!-- VIEW: INTERVENTION -->
             <div id="view-intervention" class="view">
-                <div class="premium-table-card">
+                <div class="metric-card">
+                    <h2 style="margin-bottom:1rem;">Central de Comando Direto</h2>
                     <table class="premium-table">
-                        <thead><tr><th>Máquina</th><th>Status</th><th>Parâmetros</th><th>Ações</th></tr></thead>
-                        <tbody id="intervention-table-body"></tbody>
+                        <thead><tr><th>Equipamento</th><th>Status Atual</th><th>Crítica</th><th>Ações de Intervenção</th></tr></thead>
+                        <tbody id="intervention-table"></tbody>
                     </table>
+                </div>
+                <div class="metric-card" style="margin-top:1.5rem;">
+                    <h3>Log de Intervenções (Últimas 24h)</h3>
+                    <div id="intervention-log" style="font-size:0.8rem; color:var(--text-secondary); margin-top:1rem;"></div>
                 </div>
             </div>
 
             <!-- VIEW: RFID -->
             <div id="view-rfid" class="view">
-                <div class="premium-table-card">
-                    <table class="premium-table">
-                        <thead><tr><th>Tag ID</th><th>Item</th><th>Checkpoint</th><th>Status</th></tr></thead>
-                        <tbody id="rfid-table-body"></tbody>
-                    </table>
-                </div>
+                <div class="premium-table-card"><table class="premium-table"><thead><tr><th>EPC</th><th>Tipo</th><th>Localização</th><th>Ciclos</th></tr></thead><tbody id="rfid-table"></tbody></table></div>
             </div>
 
             <!-- VIEW: CLIENT PORTAL -->
-            <div id="view-client-portal" class="view">
-                <div class="metrics-grid">
-                    <div class="metric-card"><span class="metric-label">Lotes Ativos</span><div class="metric-value">04</div></div>
-                    <div class="metric-card"><span class="metric-label">SLA Cumprido</span><div class="metric-value">98.2%</div></div>
-                </div>
-                <div id="client-batches-list"></div>
-            </div>
+            <div id="view-client-portal" class="view"><div id="client-batches"></div></div>
 
             <!-- VIEW: SIMULATOR -->
             <div id="view-simulator" class="view">
-                <div class="arch-grid">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
                     <div class="metric-card">
-                        <h3 style="margin-bottom:1.5rem;">Parâmetros de Produção</h3>
-                        <div class="slider-group"><div class="slider-row"><span>Carga (kg)</span><span id="v-sim-kg">80</span></div><input type="range" id="sim-kg" min="20" max="150" value="80" oninput="runSim()"></div>
-                        <div class="slider-group"><div class="slider-row"><span>Duração (min)</span><span id="v-sim-dur">42</span></div><input type="range" id="sim-dur" min="20" max="90" value="42" oninput="runSim()"></div>
+                        <h3>Simulação Dinâmica</h3>
+                        <div style="margin-top:1.5rem;">
+                            <label style="font-size:0.8rem;">Carga do Lote (kg)</label>
+                            <input type="range" id="sim-kg" min="10" max="200" value="100" style="width:100%;" oninput="runSim()">
+                            <div style="display:flex; justify-content:space-between; margin-top:5px;"><span id="v-kg">100kg</span><span>200kg</span></div>
+                        </div>
                     </div>
                     <div class="metric-card">
-                        <h3 style="margin-bottom:1.5rem;">Resultado Projetado</h3>
-                        <div class="metric-value" id="r-sim-total" style="font-size:3.5rem; color:var(--brand);">R$ 154,20</div>
-                        <div id="r-sim-kg" style="color:var(--text-secondary); margin-top:10px;">R$ 1,92 / kg</div>
+                        <h3>Custo Projetado</h3>
+                        <div class="metric-value" id="r-cost" style="font-size:3rem; color:var(--brand);">R$ 180,00</div>
                     </div>
                 </div>
             </div>
 
-            <!-- VIEW: ALERTS -->
-            <div id="view-alerts" class="view"><div id="alerts-list"></div></div>
-
             <!-- VIEW: ARCHITECTURE -->
             <div id="view-architecture" class="view">
-                <div class="arch-grid">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
                     <div class="metric-card">
-                        <h3 style="margin-bottom:1rem;">sensor_readings (TimescaleDB)</h3>
+                        <h3>Estrutura de Dados (Telemetry)</h3>
                         <div class="code-block">
-                            <span class="kw">SELECT</span> time, machine_id, metric, value <br>
-                            <span class="kw">FROM</span> sensor_readings <br>
-                            <span class="kw">WHERE</span> time > <span class="fn">NOW</span>() - <span class="str">'1h'</span>;
+                            <span class="kw">CREATE TABLE</span> telemetry ( <br>
+                            &nbsp;&nbsp;ts <span class="fn">TIMESTAMPTZ</span>, <br>
+                            &nbsp;&nbsp;machine_id <span class="fn">TEXT</span>, <br>
+                            &nbsp;&nbsp;metrics <span class="fn">JSONB</span> (temp, vibr, rpm, flow) <br>
+                            );
                         </div>
                     </div>
                     <div class="metric-card">
-                        <h3 style="margin-bottom:1rem;">MTBF Prediction (AI Engine)</h3>
-                        <p style="color:var(--text-secondary); font-size:0.9rem;">Cálculo preditivo baseado em vibração (XGBoost).</p>
+                        <h3>IA: Modelo Preditivo</h3>
+                        <p style="font-size:0.9rem; color:var(--text-secondary);">Rede Neural Recorrente (LSTM) analisando séries temporais de vibração para detectar falhas no rolamento principal.</p>
                     </div>
                 </div>
             </div>
@@ -310,72 +203,35 @@
     </div>
 
     <script>
-        const i18n = {
-            pt: { nav_dashboard: "Dashboard", nav_monitor: "Monitoramento", nav_intervention: "Intervenção", nav_rfid: "RFID Tracking", nav_client_portal: "Portal do Cliente", nav_simulator: "Simulador Fin.", nav_alerts: "Motor de Alertas", nav_architecture: "Arquitetura Dados", stat_oee: "OEE GLOBAL", stat_active_cycles: "CICLOS ATIVOS", stat_water_cons: "CONSUMO ÁGUA", stat_alarms: "ALERTAS ATIVOS" },
-            en: { nav_dashboard: "Dashboard", nav_monitor: "Monitoring", nav_intervention: "Intervention", nav_rfid: "RFID Tracking", nav_client_portal: "Client Portal", nav_simulator: "Finance Sim", nav_alerts: "Alert Engine", nav_architecture: "Data Architecture", stat_oee: "GLOBAL OEE", stat_active_cycles: "ACTIVE CYCLES", stat_water_cons: "WATER USAGE", stat_alarms: "ACTIVE ALERTS" }
-        };
-
-        let currentLang = 'pt';
-        function setLanguage(l) { currentLang = l; document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if(i18n[l][key]) el.textContent = i18n[l][key]; }); }
+        const machines = [
+            { id: 'TUN-01', name: 'Túnel Master 01', type: 'washer', status: 'running', temp: 65, vibr: 4.2, rpm: 1200, flow: 15.2, power: 12.5, progress: 65 },
+            { id: 'DRY-01', name: 'Secadora High-Flow 01', type: 'dryer', status: 'running', temp: 85, vibr: 2.1, rpm: 800, flow: 0, power: 18.2, progress: 22 },
+            { id: 'CAL-01', name: 'Calandra Flat-Press 01', type: 'ironer', status: 'warning', temp: 180, vibr: 8.5, rpm: 150, flow: 0, power: 8.4, progress: 95 },
+            { id: 'TUN-02', name: 'Túnel Master 02', type: 'washer', status: 'idle', temp: 22, vibr: 0.1, rpm: 0, flow: 0, power: 0.5, progress: 0 }
+        ];
 
         function switchView(id, el) {
-            console.log("Switching to view:", id);
-            
-            // 1. Hide all views
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            
-            // 2. Show target view
-            const targetView = document.getElementById('view-' + id);
-            if (targetView) {
-                targetView.classList.add('active');
-            } else {
-                console.error("View not found: view-" + id);
-            }
-            
-            // 3. Update nav links
+            document.getElementById('view-' + id).classList.add('active');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            if (el) el.classList.add('active');
-            
-            // 4. Update title with translation
-            const langKey = 'nav_' + id.replace(/-/g, '_');
-            const translatedTitle = (i18n[currentLang] && i18n[currentLang][langKey]) 
-                ? i18n[currentLang][langKey] 
-                : id;
-            document.getElementById('page-title').textContent = translatedTitle;
-
-            // 5. Trigger view-specific logic
-            try {
-                if (id === 'monitor') renderMonitor();
-                if (id === 'intervention') renderIntervention();
-                if (id === 'rfid') renderRFID();
-                if (id === 'client-portal') renderClientPortal();
-                if (id === 'alerts') renderAlerts();
-                if (id === 'simulator') runSim();
-            } catch (e) {
-                console.warn("Render error for view " + id + ":", e);
-            }
-            
-            // 6. Close mobile menu if open
-            if (window.innerWidth <= 1024) {
-                const sb = document.getElementById('sidebar');
-                if (sb.classList.contains('active')) toggleMenu();
-            }
+            if(el) el.classList.add('active');
+            document.getElementById('page-title').textContent = el ? el.textContent : id;
+            if(id==='monitor') renderMonitor(); if(id==='intervention') renderIntervention(); if(id==='rfid') renderRFID();
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('mobile-overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none'; }
 
-        const machines = [
-            { id: 'TUN-01', name: 'Túnel 01', status: 'running', temp: 65, progress: 65, type: 'washer' },
-            { id: 'DRY-01', name: 'Secadora 01', status: 'running', temp: 85, progress: 22, type: 'dryer' },
-            { id: 'CAL-01', name: 'Calandra 01', status: 'warning', temp: 180, progress: 95, type: 'ironer' }
-        ];
-
         function renderMonitor() {
-            document.getElementById('machine-monitor-grid').innerHTML = machines.map(m => `
+            document.getElementById('monitor-grid').innerHTML = machines.map(m => `
                 <div class="m-card">
-                    <div class="m-header"><b>${m.name}</b><span style="color:var(--${m.status==='running'?'success':'warning'})">${m.status}</span></div>
+                    <div class="m-header"><b>${m.name}</b><span style="color:var(--${m.status==='running'?'success':m.status==='warning'?'warning':'text-secondary'})">${m.status.toUpperCase()}</span></div>
                     <div class="m-body">
-                        <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>Temp: ${m.temp}°C</span><span>Progresso: ${Math.round(m.progress)}%</span></div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <div class="tele-item"><span class="tele-label">TEMP</span><span class="tele-val">${m.temp}°C</span></div>
+                            <div class="tele-item"><span class="tele-label">VIBR</span><span class="tele-val">${m.vibr} mm/s</span></div>
+                            <div class="tele-item"><span class="tele-label">RPM</span><span class="tele-val">${m.rpm}</span></div>
+                            <div class="tele-item"><span class="tele-label">POWER</span><span class="tele-val">${m.power} kW</span></div>
+                        </div>
                         <div class="p-track"><div class="p-fill" id="pb-${m.id}" style="width:${m.progress}%"></div></div>
                     </div>
                 </div>
@@ -383,44 +239,52 @@
         }
 
         function renderIntervention() {
-            document.getElementById('intervention-table-body').innerHTML = machines.map(m => `
-                <tr><td>${m.name}</td><td>${m.status}</td><td>T: ${m.temp}°C</td><td><button class="action-btn">STOP</button></td></tr>
+            document.getElementById('intervention-table').innerHTML = machines.map(m => `
+                <tr>
+                    <td><b>${m.name}</b></td>
+                    <td style="color:var(--${m.status==='running'?'success':m.status==='warning'?'warning':'text-secondary'})">${m.status}</td>
+                    <td>${m.vibr > 5 ? '<span style="color:var(--danger)">ALTA</span>' : 'Normal'}</td>
+                    <td style="display:flex; gap:8px;">
+                        <button class="btn btn-danger" onclick="action('${m.id}', 'STOP')"><i data-lucide="square" size="14"></i></button>
+                        <button class="btn btn-warning" onclick="action('${m.id}', 'DRAIN')"><i data-lucide="droplets" size="14"></i></button>
+                        <button class="btn btn-info" onclick="action('${m.id}', 'BOOST')"><i data-lucide="zap" size="14"></i></button>
+                        <button class="btn btn-success" onclick="action('${m.id}', 'RESET')"><i data-lucide="refresh-cw" size="14"></i></button>
+                    </td>
+                </tr>
             `).join('');
+            lucide.createIcons();
+        }
+
+        function action(id, type) {
+            alert(`Comando ${type} enviado para ${id}`);
+            const log = document.getElementById('intervention-log');
+            log.innerHTML = `<p>[${new Date().toLocaleTimeString()}] COMANDO ${type} -> ${id} EXECUTADO COM SUCESSO.</p>` + log.innerHTML;
         }
 
         function renderRFID() {
-            document.getElementById('rfid-table-body').innerHTML = `<tr><td>E28011...F1A</td><td>Lençol</td><td>Lavagem</td><td>OK</td></tr>`;
-        }
-
-        function renderClientPortal() {
-            document.getElementById('client-batches-list').innerHTML = `
-                <div class="premium-table-card"><h4>Lote #1042 - Em Processo</h4><div class="p-track"><div class="p-fill" style="width:45%"></div></div></div>
-            `;
+            document.getElementById('rfid-table').innerHTML = machines.slice(0,3).map((m, i) => `
+                <tr><td>E28011F${i}A</td><td>Lençol Casal</td><td>Checkpoint ${i+1}</td><td>${20+i} lavagens</td></tr>
+            `).join('');
         }
 
         function runSim() {
-            const kg = +document.getElementById('sim-kg').value; const dur = +document.getElementById('sim-dur').value;
-            document.getElementById('v-sim-kg').textContent = kg; document.getElementById('v-sim-dur').textContent = dur;
-            const res = (kg * 1.5) + (dur * 0.5); document.getElementById('r-sim-total').textContent = 'R$ ' + res.toFixed(2).replace('.', ',');
-        }
-
-        function renderAlerts() {
-            document.getElementById('alerts-list').innerHTML = `<div class="premium-table-card" style="border-left:4px solid var(--danger);">Temperatura excedida na Calandra 01.</div>`;
-        }
-
-        function startSimulation() {
-            setInterval(() => {
-                machines.forEach(m => { if(m.status==='running'){ m.progress += 1; if(m.progress>100) m.progress=0; const b=document.getElementById('pb-'+m.id); if(b) b.style.width=m.progress+'%'; } });
-                if(Math.random()>0.8) document.getElementById('val-oee').textContent = (84 + Math.random()*2).toFixed(1) + '%';
-            }, 3000);
+            const kg = +document.getElementById('sim-kg').value;
+            document.getElementById('v-kg').textContent = kg + 'kg';
+            document.getElementById('r-cost').textContent = 'R$ ' + (kg * 1.8).toFixed(2).replace('.', ',');
         }
 
         function initCharts() {
-            new Chart(document.getElementById('prodChart'), { type: 'line', data: { labels: ['08h', '12h', '16h'], datasets: [{ label: 'Produção', data: [400, 800, 1100], borderColor: '#2f81f7', tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false } });
-            new Chart(document.getElementById('utilChart'), { type: 'doughnut', data: { labels: ['Água', 'Gás'], datasets: [{ data: [60, 40], backgroundColor: ['#2f81f7', '#d29922'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+            new Chart(document.getElementById('prodChart'), { type: 'line', data: { labels: ['08:00', '10:00', '12:00', '14:00', '16:00'], datasets: [{ label: 'Produção (kg)', data: [450, 720, 980, 850, 1150], borderColor: '#2f81f7', tension: 0.4, fill:true, backgroundColor:'rgba(47,129,247,0.1)' }] }, options: { responsive: true, maintainAspectRatio: false } });
+            new Chart(document.getElementById('utilChart'), { type: 'doughnut', data: { labels: ['Água', 'Energia', 'Vapor'], datasets: [{ data: [45, 30, 25], backgroundColor: ['#2f81f7', '#3fb950', '#d29922'] }] }, options: { responsive: true, maintainAspectRatio: false } });
         }
 
-        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); initCharts(); startSimulation(); if(window.innerWidth<=1024) document.getElementById('menu-btn').style.display='block'; });
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons(); initCharts();
+            setInterval(() => {
+                machines.forEach(m => { if(m.status==='running'){ m.progress += 0.5; if(m.progress>100) m.progress=0; const b=document.getElementById('pb-'+m.id); if(b) b.style.width=m.progress+'%'; } });
+            }, 2000);
+            if(window.innerWidth<=1024) document.getElementById('menu-btn').style.display='block';
+        });
     </script>
 </body>
 </html>
