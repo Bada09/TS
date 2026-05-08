@@ -456,21 +456,137 @@
                 sb.textContent = '⚠ Custo acima do benchmark — otimize a carga ou reduza a duração';
             }
 
-            // Insight: usar cópia ordenada para não corromper o array
-            const sorted = bars.slice().sort((a, b) => b.v - a.v);
-            const topItem = sorted[0];
-            const topPct  = (topItem.v / total * 100).toFixed(0);
-            let tip = '';
-            if (topItem.l === 'Mão de Obra') tip = `⬆ Carga maior dilui este custo fixo. Com ${kg}kg, M.O. representa apenas ${topPct}% — aumente para 150kg+ para maximizar eficiência.`;
-            else if (topItem.l === 'Energia')  tip = 'Revise o perfil de temperatura — pico energético no aquecimento.';
-            else if (topItem.l === 'Água')     tip = 'Implemente recirculação de água para reduzir consumo por kg.';
-            else if (topItem.l === 'Químicos') tip = 'Dosagem automática pode reduzir desperdício em até 20%.';
-            else if (topItem.l === 'Depreciação') tip = `⬆ Carga maior dilui este custo fixo. Com ${kg}kg, depreciação cai para R$${(cDep/kg).toFixed(3)}/kg.`;
-            else tip = 'Considere caldeira a biomassa para reduzir custo de vapor.';
+            // ── Full Parameter Recommendation Engine ──────────────────────────
+            const recommendations = [];
 
-            document.getElementById('sim-insight').innerHTML =
-                `<b>📌 Lógica do Simulador:</b> custos fixos (M.O., energia, gás, depreciação = <b>R$${fixedCosts.toFixed(2)}</b>) se diluem com mais carga. Custos variáveis (água, químicos = <b>R$${varCosts.toFixed(2)}</b>) escalam com o peso — mas menos que a diluição.<br><br><b>💡 ${tip}</b>`;
+            // 1. CARGA (kg) — dilutes fixed costs
+            const optKg = 150; // optimal load for most industrial washers
+            const fixedPerKgCurrent = (cMao + cEne + cGas + cDep) / kg;
+            const fixedPerKgOptimal = (cMao + cEne + cGas + cDep) / optKg;
+            const kgSaving = fixedPerKgCurrent - fixedPerKgOptimal;
+            if (kg < optKg - 10) {
+                recommendations.push({ param: 'Carga do lote', icon: '⚖️', current: kg + ' kg', target: optKg + ' kg',
+                    action: `Aumentar carga para ${optKg}kg dilui custos fixos (M.O.+energia) em R$${kgSaving.toFixed(3)}/kg`, saving: kgSaving, status: 'warn',
+                    sliderId: 'sim-kg', sliderTarget: optKg });
+            } else {
+                recommendations.push({ param: 'Carga do lote', icon: '⚖️', current: kg + ' kg', target: optKg + ' kg',
+                    action: 'Carga próxima ao ideal. Não exceder a capacidade nominal da máquina.', saving: 0, status: 'ok',
+                    sliderId: 'sim-kg', sliderTarget: kg });
+            }
+
+            // 2. DURAÇÃO (min) — longer = more gas+depreciation, but may be needed for quality
+            const optDur = 38; // benchmark cycle for standard linen
+            const durSaving = ((dur - optDur) * (0.08 + 0.30)) / kg;
+            if (dur > optDur + 5) {
+                recommendations.push({ param: 'Duração do ciclo', icon: '⏱️', current: dur + ' min', target: optDur + ' min',
+                    action: `Reduzir ${dur - optDur} min economiza R$${Math.max(0, durSaving).toFixed(3)}/kg em gás e depreciação. Validar com QC.`, saving: Math.max(0, durSaving), status: 'warn',
+                    sliderId: 'sim-dur', sliderTarget: optDur });
+            } else {
+                recommendations.push({ param: 'Duração do ciclo', icon: '⏱️', current: dur + ' min', target: optDur + ' min',
+                    action: 'Duração dentro do padrão. Ciclos abaixo de 30 min comprometem higienização.', saving: 0, status: 'ok',
+                    sliderId: 'sim-dur', sliderTarget: dur });
+            }
+
+            // 3. OPERADORES — too many = waste, too few = bottleneck
+            const optOps = kg > 120 ? 3 : 2;
+            const opsSaving = (ops - optOps) * 18 * (dur / 60) / kg;
+            if (ops > optOps) {
+                recommendations.push({ param: 'Operadores', icon: '👷', current: ops + ' ops', target: optOps + ' ops',
+                    action: `Com ${kg}kg, ${optOps} operador(es) é suficiente. Reduzir economiza R$${Math.max(0, opsSaving).toFixed(3)}/kg em M.O.`, saving: Math.max(0, opsSaving), status: 'warn',
+                    sliderId: 'sim-ops', sliderTarget: optOps });
+            } else if (ops < optOps) {
+                recommendations.push({ param: 'Operadores', icon: '👷', current: ops + ' ops', target: optOps + ' ops',
+                    action: `Carga de ${kg}kg requer ${optOps} operadores para manter ritmo seguro.`, saving: -0.001, status: 'danger',
+                    sliderId: 'sim-ops', sliderTarget: optOps });
+            } else {
+                recommendations.push({ param: 'Operadores', icon: '👷', current: ops + ' ops', target: optOps + ' ops',
+                    action: 'Alocação de operadores ideal para esta carga.', saving: 0, status: 'ok',
+                    sliderId: 'sim-ops', sliderTarget: ops });
+            }
+
+            // 4. ÁGUA — benchmark is 6 L/kg for modern tunnel washers
+            const optWater = 6;
+            const waterSaving = (water - optWater) * kg / 1000 * 18 / kg;
+            if (water > optWater + 1) {
+                recommendations.push({ param: 'Consumo de Água', icon: '💧', current: water + ' L/kg', target: optWater + ' L/kg',
+                    action: `Instalar recirculação de água. Reduzir para ${optWater}L/kg economiza R$${Math.max(0, waterSaving).toFixed(3)}/kg.`, saving: Math.max(0, waterSaving), status: 'warn',
+                    sliderId: 'sim-water', sliderTarget: optWater });
+            } else {
+                recommendations.push({ param: 'Consumo de Água', icon: '💧', current: water + ' L/kg', target: optWater + ' L/kg',
+                    action: 'Consumo de água excelente. Manter sistema de recirculação ativo.', saving: 0, status: 'ok',
+                    sliderId: 'sim-water', sliderTarget: water });
+            }
+
+            // 5. ENERGIA — benchmark 10 kWh for standard batch
+            const optEnergy = 10;
+            const energySaving = (energy - optEnergy) * 0.72 / kg;
+            if (energy > optEnergy + 2) {
+                recommendations.push({ param: 'Energia', icon: '⚡', current: energy + ' kWh', target: optEnergy + ' kWh',
+                    action: `Ajustar temperatura de lavagem e usar inversores de frequência. Economiza R$${Math.max(0, energySaving).toFixed(3)}/kg.`, saving: Math.max(0, energySaving), status: 'warn',
+                    sliderId: 'sim-energy', sliderTarget: optEnergy });
+            } else {
+                recommendations.push({ param: 'Energia', icon: '⚡', current: energy + ' kWh', target: optEnergy + ' kWh',
+                    action: 'Consumo energético dentro do padrão. Verificar eficiência do aquecedor.', saving: 0, status: 'ok',
+                    sliderId: 'sim-energy', sliderTarget: energy });
+            }
+
+            // 6. QUÍMICOS — benchmark 6 g/kg
+            const optChem = 6;
+            const chemSaving = (chem - optChem) / 1000 * kg * 12 / kg;
+            if (chem > optChem + 1) {
+                recommendations.push({ param: 'Dosagem Química', icon: '🧪', current: chem + ' g/kg', target: optChem + ' g/kg',
+                    action: `Sistema de dosagem automática por peso reduz para ${optChem}g/kg, economizando R$${Math.max(0, chemSaving).toFixed(3)}/kg.`, saving: Math.max(0, chemSaving), status: 'warn',
+                    sliderId: 'sim-chem', sliderTarget: optChem });
+            } else {
+                recommendations.push({ param: 'Dosagem Química', icon: '🧪', current: chem + ' g/kg', target: optChem + ' g/kg',
+                    action: 'Dosagem química calibrada. Manter controle de pH para confirmar eficácia.', saving: 0, status: 'ok',
+                    sliderId: 'sim-chem', sliderTarget: optChem });
+            }
+
+            // Total potential saving
+            const totalSaving = recommendations.reduce((s, r) => s + Math.max(0, r.saving), 0);
+            const colorMap = { ok: 'var(--success)', warn: 'var(--warning)', danger: 'var(--danger)' };
+            const bgMap    = { ok: 'rgba(63,185,80,0.05)', warn: 'rgba(210,153,34,0.07)', danger: 'rgba(248,81,73,0.07)' };
+
+            const recEl = document.getElementById('sim-insight');
+            recEl.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <b style="font-size:0.9rem;">🤖 Recomendações do Motor de Otimização</b>
+                    ${totalSaving > 0.005 ? `<span style="color:var(--success);font-weight:700;">Potencial: -R$${totalSaving.toFixed(3)}/kg</span>` : '<span style="color:var(--success);">✓ Operação otimizada</span>'}
+                </div>
+                ${recommendations.map(r => `
+                <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:${bgMap[r.status]};border-left:3px solid ${colorMap[r.status]};border-radius:0 8px 8px 0;margin-bottom:8px;">
+                    <span style="font-size:1.1rem;">${r.icon}</span>
+                    <div style="flex:1;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:2px;">
+                            <b style="color:${colorMap[r.status]};font-size:0.8rem;">${r.param}</b>
+                            <span style="font-size:0.75rem;color:var(--text-tertiary);">${r.current} → <b style="color:${colorMap[r.status]}">${r.target}</b>
+                            ${r.saving > 0.001 ? `<span style="color:var(--success)"> (-R$${r.saving.toFixed(3)}/kg)</span>` : ''}</span>
+                        </div>
+                        <span style="font-size:0.78rem;color:var(--text-secondary);">${r.action}</span>
+                    </div>
+                    ${r.status !== 'ok' ? `<button onclick="applyRec('${r.sliderId}',${r.sliderTarget})" style="padding:4px 10px;font-size:0.7rem;font-weight:700;background:var(--bg-accent);border:1px solid ${colorMap[r.status]};color:${colorMap[r.status]};border-radius:6px;cursor:pointer;white-space:nowrap;">Aplicar</button>` : ''}
+                </div>`).join('')}
+                ${totalSaving > 0.005 ? `<button onclick="applyAllRecs()" style="width:100%;padding:10px;margin-top:4px;font-weight:700;font-size:0.85rem;background:rgba(47,129,247,0.1);border:1px solid var(--brand);color:var(--brand);border-radius:8px;cursor:pointer;">⚡ Aplicar Todas as Recomendações Automaticamente</button>` : ''}
+            `;
         }
+
+        function applyRec(sliderId, value) {
+            const el = document.getElementById(sliderId);
+            if (el) { el.value = value; runSim(); flashEl(document.getElementById('r-per-kg')); }
+        }
+
+        function applyAllRecs() {
+            // Apply all optimal values at once
+            const optimalValues = { 'sim-kg': 150, 'sim-dur': 38, 'sim-ops': 2, 'sim-water': 6, 'sim-energy': 10, 'sim-chem': 6 };
+            Object.entries(optimalValues).forEach(([id, val]) => {
+                const el = document.getElementById(id);
+                if (el) el.value = val;
+            });
+            runSim();
+            flashEl(document.getElementById('r-per-kg'));
+        }
+
 
         function initCharts() {
             new Chart(document.getElementById('prodChart'), { type: 'line', data: { labels: ['08:00', '10:00', '12:00', '14:00', '16:00'], datasets: [{ label: 'Produção (kg)', data: [450, 720, 980, 850, 1150], borderColor: '#2f81f7', tension: 0.4, fill:true, backgroundColor:'rgba(47,129,247,0.1)' }] }, options: { responsive: true, maintainAspectRatio: false } });
