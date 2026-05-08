@@ -1,0 +1,270 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.root{padding:1rem 0;}
+.tab-row{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.tab{font-size:12px;font-weight:500;padding:5px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s;}
+.tab.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:transparent;}
+.section{display:none;}
+.section.active{display:block;}
+
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding:.75rem 1rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);}
+.dash-logo{font-size:13px;font-weight:500;color:var(--color-text-primary);}
+.dash-sub{font-size:11px;color:var(--color-text-tertiary);}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1rem;}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.85rem 1rem;}
+.metric-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:3px;}
+.metric-val{font-size:20px;font-weight:500;color:var(--color-text-primary);}
+.metric-sub{font-size:10px;color:var(--color-text-tertiary);margin-top:2px;}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.9rem 1rem;}
+.card-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:.65rem;}
+.badge{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500;}
+.badge.green{background:#EAF3DE;color:#3B6D11;}
+.badge.amber{background:#FAEEDA;color:#854F0B;}
+.badge.red{background:#FCEBEB;color:#A32D2D;}
+.badge.blue{background:#E6F1FB;color:#185FA5;}
+.badge.gray{background:#F1EFE8;color:#5F5E5A;}
+.lote-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
+.lote-row:last-child{border-bottom:none;}
+.lote-id{font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);min-width:130px;}
+.lote-info{flex:1;font-size:12px;color:var(--color-text-primary);}
+.lote-eta{font-size:11px;color:var(--color-text-tertiary);}
+.progress-bar{height:4px;background:var(--color-background-secondary);border-radius:2px;margin-top:4px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:2px;}
+.step-flow{display:flex;align-items:center;gap:0;margin:.5rem 0;}
+.step{display:flex;flex-direction:column;align-items:center;flex:1;}
+.step-dot{width:10px;height:10px;border-radius:50%;margin-bottom:3px;}
+.step-dot.done{background:#1D9E75;}
+.step-dot.active{background:#185FA5;}
+.step-dot.pending{background:var(--color-border-tertiary);}
+.step-label{font-size:9px;color:var(--color-text-tertiary);text-align:center;}
+.step-line{height:2px;flex:1;background:var(--color-border-tertiary);margin-bottom:13px;}
+.step-line.done{background:#1D9E75;}
+.chart-bar-wrap{margin:.5rem 0;}
+.chart-label{display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;}
+.chart-track{height:10px;background:var(--color-background-secondary);border-radius:5px;overflow:hidden;}
+.chart-fill{height:100%;border-radius:5px;}
+.sep{height:0.5px;background:var(--color-border-tertiary);margin:.85rem 0;}
+.table{width:100%;border-collapse:collapse;font-size:12px;}
+.table th{text-align:left;padding:5px 8px;font-size:11px;font-weight:500;color:var(--color-text-tertiary);border-bottom:0.5px solid var(--color-border-tertiary);}
+.table td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);}
+.table tr:last-child td{border-bottom:none;}
+.notif-row{display:flex;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);align-items:flex-start;}
+.notif-row:last-child{border-bottom:none;}
+.notif-dot{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.notif-body{flex:1;font-size:12px;color:var(--color-text-primary);line-height:1.45;}
+.notif-time{font-size:10px;color:var(--color-text-tertiary);white-space:nowrap;}
+.api-block{font-family:var(--font-mono);font-size:11px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem;color:var(--color-text-secondary);line-height:1.7;}
+.kw{color:#185FA5;}.str{color:#BA7517;}.fn{color:#1D9E75;}.cm{color:#B4B2A9;}
+</style>
+<div class="root">
+<div class="tab-row">
+  <button class="tab active" onclick="showTab('operador')">Visão operacional (zelador)</button>
+  <button class="tab" onclick="showTab('gerente')">Visão gerencial (gestor)</button>
+  <button class="tab" onclick="showTab('api')">API para integração</button>
+</div>
+
+<!-- OPERADOR -->
+<div class="section active" id="tab-operador">
+  <div class="dash-header">
+    <div><div class="dash-logo">Hospital Santa Cruz</div><div class="dash-sub">Acompanhamento de rouparia — atualizado há 2 min</div></div>
+    <span class="badge green">Todos os lotes no prazo</span>
+  </div>
+  <div class="grid4">
+    <div class="metric"><div class="metric-label">Peças em processamento</div><div class="metric-val">1.240</div><div class="metric-sub">4 lotes ativos</div></div>
+    <div class="metric"><div class="metric-label">Prontas para retirada</div><div class="metric-val">380</div><div class="metric-sub">Lote 012 — desde 09h</div></div>
+    <div class="metric"><div class="metric-label">Entregues hoje</div><div class="metric-val">860</div><div class="metric-sub">2 lotes concluídos</div></div>
+    <div class="metric"><div class="metric-label">SLA do mês</div><div class="metric-val">98,2%</div><div class="metric-sub">no prazo</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Lotes em andamento</div>
+    <div class="lote-row">
+      <div>
+        <div class="step-flow">
+          <div class="step"><div class="step-dot done"></div><div class="step-label">Recepção</div></div>
+          <div class="step-line done"></div>
+          <div class="step"><div class="step-dot done"></div><div class="step-label">Lavagem</div></div>
+          <div class="step-line done"></div>
+          <div class="step"><div class="step-dot active"></div><div class="step-label">Secagem</div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-dot pending"></div><div class="step-label">Passadoria</div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-dot pending"></div><div class="step-label">Pronto</div></div>
+        </div>
+      </div>
+      <div style="flex:1;margin-left:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;font-weight:500;color:var(--color-text-primary);">Lote 014 — 312 peças</span>
+          <span class="badge green">No prazo</span>
+        </div>
+        <div class="lote-eta">Previsão de entrega: hoje 15h30 · SLA: 17h00</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:60%;background:#1D9E75;"></div></div>
+      </div>
+    </div>
+    <div class="lote-row">
+      <div>
+        <div class="step-flow">
+          <div class="step"><div class="step-dot done"></div><div class="step-label">Recepção</div></div>
+          <div class="step-line done"></div>
+          <div class="step"><div class="step-dot active"></div><div class="step-label">Lavagem</div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-dot pending"></div><div class="step-label">Secagem</div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-dot pending"></div><div class="step-label">Passadoria</div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-dot pending"></div><div class="step-label">Pronto</div></div>
+        </div>
+      </div>
+      <div style="flex:1;margin-left:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;font-weight:500;color:var(--color-text-primary);">Lote 015 — 458 peças</span>
+          <span class="badge amber">Atenção — 1h de folga</span>
+        </div>
+        <div class="lote-eta">Previsão de entrega: hoje 18h45 · SLA: 19h00</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:25%;background:#BA7517;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:10px;">
+    <div class="card-title">Notificações</div>
+    <div class="notif-row">
+      <div class="notif-dot" style="background:#1D9E75;"></div>
+      <div class="notif-body">Lote 012 disponível para retirada — 380 peças no setor de expedição.</div>
+      <div class="notif-time">09h14</div>
+    </div>
+    <div class="notif-row">
+      <div class="notif-dot" style="background:#BA7517;"></div>
+      <div class="notif-body">Lote 015 com margem reduzida de SLA. Acompanharemos e avisaremos caso haja risco.</div>
+      <div class="notif-time">08h52</div>
+    </div>
+    <div class="notif-row">
+      <div class="notif-dot" style="background:#1D9E75;"></div>
+      <div class="notif-body">Lote 013 entregue. 470 peças — 12 itens com registro de ocorrência (encaminhados para reprocesso sem custo).</div>
+      <div class="notif-time">Ontem 17h30</div>
+    </div>
+  </div>
+</div>
+
+<!-- GERENTE -->
+<div class="section" id="tab-gerente">
+  <div class="dash-header">
+    <div><div class="dash-logo">Hospital Santa Cruz — Gestão</div><div class="dash-sub">Relatório mensal consolidado · Maio 2026</div></div>
+    <span class="badge blue">Contrato ativo</span>
+  </div>
+  <div class="grid4">
+    <div class="metric"><div class="metric-label">Peças processadas no mês</div><div class="metric-val">48.320</div><div class="metric-sub">meta 45.000</div></div>
+    <div class="metric"><div class="metric-label">SLA cumprido</div><div class="metric-val">98,2%</div><div class="metric-sub">meta 97%</div></div>
+    <div class="metric"><div class="metric-label">Ocorrências registradas</div><div class="metric-val">34</div><div class="metric-sub">0,07% das peças</div></div>
+    <div class="metric"><div class="metric-label">NPS do serviço</div><div class="metric-val">72</div><div class="metric-sub">última pesquisa</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Cumprimento de SLA por semana</div>
+      <div class="chart-bar-wrap"><div class="chart-label"><span>Semana 1</span><span>100%</span></div><div class="chart-track"><div class="chart-fill" style="width:100%;background:#1D9E75;"></div></div></div>
+      <div class="chart-bar-wrap"><div class="chart-label"><span>Semana 2</span><span>98,5%</span></div><div class="chart-track"><div class="chart-fill" style="width:98.5%;background:#1D9E75;"></div></div></div>
+      <div class="chart-bar-wrap"><div class="chart-label"><span>Semana 3</span><span>94,1%</span></div><div class="chart-track"><div class="chart-fill" style="width:94%;background:#BA7517;"></div></div></div>
+      <div class="chart-bar-wrap"><div class="chart-label"><span>Semana 4</span><span>99,8%</span></div><div class="chart-track"><div class="chart-fill" style="width:99.8%;background:#1D9E75;"></div></div></div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:8px;">Semana 3: atraso por manutenção corretiva em lav_02 — comunicado enviado em tempo real.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Ocorrências por tipo</div>
+      <div class="chart-bar-wrap"><div class="chart-label"><span>Manchas persistentes</span><span>14</span></div><div class="chart-track"><div class="chart-fill" style="width:70%;background:#185FA5;"></div></div></div>
+      <div class="chart-bar-wrap"><div class="chart-label"><span>Itens reprocessados</span><span>12</span></div><div class="chart-track"><div class="chart-fill" style="width:60%;background:#534AB7;"></div></div></div>
+      <div class="chart-bar-wrap"><div class="chart-label"><span>Atrasos de entrega</span><span>6</span></div><div class="chart-track"><div class="chart-fill" style="width:30%;background:#BA7517;"></div></div></div>
+      <div class="chart-bar-wrap"><div class="chart-label"><span>Itens não localizados</span><span>2</span></div><div class="chart-track"><div class="chart-fill" style="width:10%;background:#E24B4A;"></div></div></div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:8px;">Todos os 2 itens não localizados foram ressarcidos conforme cláusula 8.2 do contrato.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Histórico de lotes — maio 2026</div>
+    <table class="table">
+      <thead><tr><th>Lote</th><th>Data entrega</th><th>Peças</th><th>SLA</th><th>Ocorrências</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">Lote-013</td><td>08/05 17h30</td><td>470</td><td>17h00 ✓</td><td>12 reprocessadas</td><td><span class="badge green">Entregue</span></td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">Lote-012</td><td>08/05 09h10</td><td>380</td><td>11h00 ✓</td><td>0</td><td><span class="badge green">Entregue</span></td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">Lote-011</td><td>07/05 16h20</td><td>620</td><td>16h00 ✗</td><td>0</td><td><span class="badge amber">+20min atraso</span></td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">Lote-010</td><td>07/05 08h50</td><td>290</td><td>10h00 ✓</td><td>2 manchas</td><td><span class="badge green">Entregue</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- API -->
+<div class="section" id="tab-api">
+  <div class="card">
+    <div class="card-title">Endpoints REST disponíveis</div>
+    <table class="table">
+      <thead><tr><th>Endpoint</th><th>Método</th><th>Retorno</th><th>Uso</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">/v1/batches</td><td><span class="badge blue">GET</span></td><td>lista de lotes ativos</td><td>painel interno do cliente</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">/v1/batches/{id}</td><td><span class="badge blue">GET</span></td><td>status + timeline do lote</td><td>rastreio por lote</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">/v1/items/{epc}</td><td><span class="badge blue">GET</span></td><td>localização da peça</td><td>busca individual</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">/v1/sla/summary</td><td><span class="badge blue">GET</span></td><td>SLA do período</td><td>relatório gerencial</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">/v1/incidents</td><td><span class="badge blue">GET</span></td><td>ocorrências registradas</td><td>gestão de qualidade</td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;">/v1/webhooks</td><td><span class="badge green">POST</span></td><td>—</td><td>receber push de eventos</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid2" style="margin-top:10px;">
+    <div>
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px;">Resposta de /v1/batches/{id}</div>
+      <div class="api-block">{
+  <span class="str">"batch_id"</span>: <span class="str">"lote_2026_0508_014"</span>,
+  <span class="str">"client_id"</span>: <span class="str">"hospital_santa_cruz"</span>,
+  <span class="str">"status"</span>: <span class="str">"drying"</span>,
+  <span class="str">"item_count"</span>: 312,
+  <span class="str">"sla_deadline"</span>: <span class="str">"2026-05-08T17:00:00Z"</span>,
+  <span class="str">"eta"</span>: <span class="str">"2026-05-08T15:30:00Z"</span>,
+  <span class="str">"sla_risk"</span>: <span class="fn">false</span>,
+  <span class="str">"checkpoints"</span>: [
+    { <span class="str">"step"</span>: <span class="str">"reception"</span>,  <span class="str">"at"</span>: <span class="str">"08:10Z"</span>, <span class="str">"done"</span>: <span class="fn">true</span> },
+    { <span class="str">"step"</span>: <span class="str">"washing"</span>,    <span class="str">"at"</span>: <span class="str">"09:05Z"</span>, <span class="str">"done"</span>: <span class="fn">true</span> },
+    { <span class="str">"step"</span>: <span class="str">"drying"</span>,     <span class="str">"at"</span>: <span class="str">"12:40Z"</span>, <span class="str">"done"</span>: <span class="fn">false</span> },
+    { <span class="str">"step"</span>: <span class="str">"finishing"</span>,  <span class="str">"at"</span>: <span class="fn">null</span>,     <span class="str">"done"</span>: <span class="fn">false</span> },
+    { <span class="str">"step"</span>: <span class="str">"dispatch"</span>,   <span class="str">"at"</span>: <span class="fn">null</span>,     <span class="str">"done"</span>: <span class="fn">false</span> }
+  ]
+}</div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px;">Configuração de webhook</div>
+      <div class="api-block"><span class="cm">// POST /v1/webhooks</span>
+{
+  <span class="str">"url"</span>: <span class="str">"https://erp.hospital.com/hooks/laundry"</span>,
+  <span class="str">"events"</span>: [
+    <span class="str">"batch.ready_for_pickup"</span>,
+    <span class="str">"batch.sla_risk"</span>,
+    <span class="str">"batch.delivered"</span>,
+    <span class="str">"incident.created"</span>
+  ],
+  <span class="str">"secret"</span>: <span class="str">"whsec_..."</span> <span class="cm">// HMAC-SHA256</span>
+}
+
+<span class="cm">// Evento enviado ao ERP do hospital:</span>
+{
+  <span class="str">"event"</span>: <span class="str">"batch.ready_for_pickup"</span>,
+  <span class="str">"batch_id"</span>: <span class="str">"lote_2026_0508_012"</span>,
+  <span class="str">"item_count"</span>: 380,
+  <span class="str">"location"</span>: <span class="str">"expedição_dock_2"</span>,
+  <span class="str">"timestamp"</span>: <span class="str">"2026-05-08T09:14:00Z"</span>
+}</div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:6px;">O webhook integra diretamente ao sistema de zeladoria do hospital — o zelador recebe a notificação no ERP dele, sem precisar abrir o portal.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function showTab(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>

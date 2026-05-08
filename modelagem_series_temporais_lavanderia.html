@@ -1,0 +1,163 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.root{padding:1rem 0;}
+.sec{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-tertiary);margin:1.5rem 0 .75rem;}
+.sec:first-child{margin-top:0;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.9rem 1rem;}
+.card.accent{border-left:3px solid #185FA5;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0;}
+.card.green{border-left:3px solid #1D9E75;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0;}
+.card.amber{border-left:3px solid #BA7517;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0;}
+.table-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;}
+.badge.blue{background:#E6F1FB;color:#185FA5;}
+.badge.green{background:#EAF3DE;color:#3B6D11;}
+.badge.amber{background:#FAEEDA;color:#854F0B;}
+.badge.gray{background:#F1EFE8;color:#5F5E5A;}
+.field-row{display:flex;gap:6px;margin-bottom:4px;align-items:baseline;}
+.field-name{font-size:12px;font-weight:500;color:var(--color-text-primary);min-width:140px;}
+.field-type{font-size:10px;font-family:var(--font-mono);background:var(--color-background-secondary);padding:1px 5px;border-radius:3px;color:var(--color-text-secondary);}
+.field-desc{font-size:11px;color:var(--color-text-tertiary);margin-left:4px;}
+.sep{height:0.5px;background:var(--color-border-tertiary);margin:.75rem 0;}
+.code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem;color:var(--color-text-secondary);line-height:1.7;overflow-x:auto;}
+.kw{color:#185FA5;}
+.fn{color:#1D9E75;}
+.cm{color:#B4B2A9;}
+.str{color:#BA7517;}
+.note{font-size:12px;color:var(--color-text-secondary);line-height:1.55;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem;margin-top:6px;}
+.policy-row{display:flex;gap:10px;align-items:center;margin-bottom:6px;}
+.policy-label{font-size:12px;color:var(--color-text-secondary);min-width:130px;}
+.policy-val{font-size:12px;font-weight:500;color:var(--color-text-primary);}
+.arrow{color:var(--color-text-tertiary);font-size:11px;margin:0 4px;}
+</style>
+<div class="root">
+
+<div class="sec">Tabelas principais — TimescaleDB / InfluxDB</div>
+<div class="grid2">
+  <div class="card accent">
+    <div class="table-name">sensor_readings <span class="badge blue">alta frequência</span></div>
+    <div class="field-row"><span class="field-name">time</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">PK — índice principal</span></div>
+    <div class="field-row"><span class="field-name">machine_id</span><span class="field-type">TEXT</span><span class="field-desc">tag — particionamento</span></div>
+    <div class="field-row"><span class="field-name">metric</span><span class="field-type">TEXT</span><span class="field-desc">tag: temp, ph, rpm, vibr</span></div>
+    <div class="field-row"><span class="field-name">value</span><span class="field-type">DOUBLE</span><span class="field-desc">leitura bruta do sensor</span></div>
+    <div class="field-row"><span class="field-name">unit</span><span class="field-type">TEXT</span><span class="field-desc">°C, pH, rpm, g</span></div>
+    <div class="field-row"><span class="field-name">quality</span><span class="field-type">SMALLINT</span><span class="field-desc">0=ok 1=estimado 2=falho</span></div>
+    <div class="sep"></div>
+    <div class="note">Leitura a cada 5–30s por sensor. Compressão automática após 7 dias. Retenção raw: 90 dias.</div>
+  </div>
+  <div class="card accent">
+    <div class="table-name">cycle_metrics <span class="badge blue">por ciclo</span></div>
+    <div class="field-row"><span class="field-name">cycle_id</span><span class="field-type">UUID</span><span class="field-desc">PK do ciclo</span></div>
+    <div class="field-row"><span class="field-name">machine_id</span><span class="field-type">TEXT</span><span class="field-desc">tag</span></div>
+    <div class="field-row"><span class="field-name">started_at</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">início do ciclo</span></div>
+    <div class="field-row"><span class="field-name">ended_at</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">fim do ciclo</span></div>
+    <div class="field-row"><span class="field-name">kg_loaded</span><span class="field-type">DOUBLE</span><span class="field-desc">carga em kg</span></div>
+    <div class="field-row"><span class="field-name">water_liters</span><span class="field-type">DOUBLE</span><span class="field-desc">consumo total do ciclo</span></div>
+    <div class="field-row"><span class="field-name">energy_kwh</span><span class="field-type">DOUBLE</span><span class="field-desc">consumo total do ciclo</span></div>
+    <div class="field-row"><span class="field-name">chemical_g</span><span class="field-type">DOUBLE</span><span class="field-desc">dosagem total</span></div>
+    <div class="field-row"><span class="field-name">cost_total</span><span class="field-type">DOUBLE</span><span class="field-desc">calculado ao encerrar</span></div>
+    <div class="field-row"><span class="field-name">rework_flag</span><span class="field-type">BOOLEAN</span><span class="field-desc">marcado pelo QC</span></div>
+    <div class="sep"></div>
+    <div class="note">Registro criado ao abrir ciclo, atualizado ao fechar. Base do custo por kg em tempo real.</div>
+  </div>
+</div>
+
+<div class="grid2" style="margin-top:10px;">
+  <div class="card green">
+    <div class="table-name">machine_events <span class="badge green">eventos discretos</span></div>
+    <div class="field-row"><span class="field-name">time</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">PK</span></div>
+    <div class="field-row"><span class="field-name">machine_id</span><span class="field-type">TEXT</span><span class="field-desc">tag</span></div>
+    <div class="field-row"><span class="field-name">event_type</span><span class="field-type">TEXT</span><span class="field-desc">start, stop, alarm, maintenance</span></div>
+    <div class="field-row"><span class="field-name">prev_status</span><span class="field-type">TEXT</span><span class="field-desc">estado anterior</span></div>
+    <div class="field-row"><span class="field-name">new_status</span><span class="field-type">TEXT</span><span class="field-desc">estado novo</span></div>
+    <div class="field-row"><span class="field-name">alarm_code</span><span class="field-type">TEXT</span><span class="field-desc">código do PLC (nullable)</span></div>
+    <div class="field-row"><span class="field-name">operator_id</span><span class="field-type">TEXT</span><span class="field-desc">quem confirmou (nullable)</span></div>
+    <div class="sep"></div>
+    <div class="note">Fonte do cálculo de MTBF e MTTR. Cada transição de estado é um evento imutável.</div>
+  </div>
+  <div class="card green">
+    <div class="table-name">consumption_hourly <span class="badge green">materialized view</span></div>
+    <div class="field-row"><span class="field-name">bucket</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">hora truncada (índice)</span></div>
+    <div class="field-row"><span class="field-name">machine_id</span><span class="field-type">TEXT</span><span class="field-desc">tag</span></div>
+    <div class="field-row"><span class="field-name">avg_temp</span><span class="field-type">DOUBLE</span><span class="field-desc">média horária</span></div>
+    <div class="field-row"><span class="field-name">max_vibration</span><span class="field-type">DOUBLE</span><span class="field-desc">pico de vibração</span></div>
+    <div class="field-row"><span class="field-name">sum_water_l</span><span class="field-type">DOUBLE</span><span class="field-desc">acumulado na hora</span></div>
+    <div class="field-row"><span class="field-name">sum_energy_kwh</span><span class="field-type">DOUBLE</span><span class="field-desc">acumulado na hora</span></div>
+    <div class="field-row"><span class="field-name">cycles_completed</span><span class="field-type">INT</span><span class="field-desc">ciclos concluídos</span></div>
+    <div class="sep"></div>
+    <div class="note">Atualizada a cada 1 min automaticamente. Alimenta dashboards sem consultar raw.</div>
+  </div>
+</div>
+
+<div class="sec">Políticas de retenção e compressão</div>
+<div class="card">
+  <div class="policy-row"><span class="policy-label">Raw (sensor_readings)</span><span class="arrow">→</span><span class="policy-val">0–7 dias: sem compressão, acesso imediato</span></div>
+  <div class="policy-row"><span class="policy-label"></span><span class="arrow">→</span><span class="policy-val">7–90 dias: compressão columnar (~10× menor)</span></div>
+  <div class="policy-row"><span class="policy-label"></span><span class="arrow">→</span><span class="policy-val">90 dias+: drop automático (dados já agregados)</span></div>
+  <div class="sep"></div>
+  <div class="policy-row"><span class="policy-label">cycle_metrics</span><span class="arrow">→</span><span class="policy-val">retenção permanente — é o registro financeiro do ciclo</span></div>
+  <div class="policy-row"><span class="policy-label">machine_events</span><span class="arrow">→</span><span class="policy-val">retenção permanente — histórico de falhas e manutenção</span></div>
+  <div class="policy-row"><span class="policy-label">consumption_hourly</span><span class="arrow">→</span><span class="policy-val">retenção permanente — base do benchmarking histórico</span></div>
+</div>
+
+<div class="sec">Queries essenciais</div>
+<div class="grid2">
+  <div>
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px;">Custo por kg — últimas 24h por máquina</div>
+    <div class="code"><span class="kw">SELECT</span> machine_id,
+  <span class="fn">AVG</span>(cost_total / kg_loaded) <span class="kw">AS</span> custo_por_kg,
+  <span class="fn">SUM</span>(kg_loaded) <span class="kw">AS</span> kg_total,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> ciclos
+<span class="kw">FROM</span> cycle_metrics
+<span class="kw">WHERE</span> started_at &gt; <span class="fn">NOW</span>() - <span class="str">INTERVAL '24h'</span>
+<span class="kw">GROUP BY</span> machine_id
+<span class="kw">ORDER BY</span> custo_por_kg <span class="kw">DESC</span>;</div>
+  </div>
+  <div>
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px;">Benchmark adaptativo — mesmo turno, 14 dias</div>
+    <div class="code"><span class="kw">SELECT</span>
+  <span class="fn">time_bucket</span>(<span class="str">'1h'</span>, bucket) <span class="kw">AS</span> hora,
+  <span class="fn">AVG</span>(sum_water_l / <span class="fn">NULLIF</span>(cycles_completed,0))
+    <span class="kw">AS</span> agua_por_ciclo_media
+<span class="kw">FROM</span> consumption_hourly
+<span class="kw">WHERE</span>
+  bucket &gt; <span class="fn">NOW</span>() - <span class="str">INTERVAL '14d'</span>
+  <span class="kw">AND</span> <span class="fn">EXTRACT</span>(hour <span class="kw">FROM</span> bucket)
+    <span class="kw">BETWEEN</span> 6 <span class="kw">AND</span> 14 <span class="cm">-- turno manhã</span>
+<span class="kw">GROUP BY</span> 1
+<span class="kw">ORDER BY</span> 1;</div>
+  </div>
+  <div>
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px;">Vibração anômala — últimos 3 ciclos consecutivos</div>
+    <div class="code"><span class="kw">SELECT</span> machine_id,
+  <span class="fn">last</span>(value, time) <span class="kw">AS</span> ultima_vibracao,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> leituras_altas
+<span class="kw">FROM</span> sensor_readings
+<span class="kw">WHERE</span>
+  metric = <span class="str">'vibration'</span>
+  <span class="kw">AND</span> value &gt; <span class="str">8.5</span> <span class="cm">-- threshold mm/s²</span>
+  <span class="kw">AND</span> time &gt; <span class="fn">NOW</span>() - <span class="str">INTERVAL '2h'</span>
+<span class="kw">GROUP BY</span> machine_id
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) &gt;= 3;</div>
+  </div>
+  <div>
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px;">MTBF por máquina — últimos 30 dias</div>
+    <div class="code"><span class="kw">SELECT</span> machine_id,
+  <span class="fn">AVG</span>(gap_horas) <span class="kw">AS</span> mtbf_horas
+<span class="kw">FROM</span> (
+  <span class="kw">SELECT</span> machine_id,
+    <span class="fn">EXTRACT</span>(epoch <span class="kw">FROM</span>
+      time - <span class="fn">LAG</span>(time) <span class="kw">OVER</span>
+        (<span class="kw">PARTITION BY</span> machine_id
+         <span class="kw">ORDER BY</span> time)
+    )/3600 <span class="kw">AS</span> gap_horas
+  <span class="kw">FROM</span> machine_events
+  <span class="kw">WHERE</span> event_type = <span class="str">'alarm'</span>
+    <span class="kw">AND</span> time &gt; <span class="fn">NOW</span>()-<span class="str">INTERVAL '30d'</span>
+) <span class="kw">AS</span> gaps
+<span class="kw">GROUP BY</span> machine_id;</div>
+  </div>
+</div>
+</div>

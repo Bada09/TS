@@ -1,0 +1,253 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.root{padding:1rem 0;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.section{margin-bottom:1.5rem;}
+.sec-label{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:.75rem;}
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.slider-label{font-size:12px;color:var(--color-text-secondary);min-width:170px;}
+.slider-val{font-size:12px;font-weight:500;color:var(--color-text-primary);min-width:52px;text-align:right;}
+input[type=range]{flex:1;}
+.result-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.1rem;}
+.result-title{font-size:11px;color:var(--color-text-tertiary);margin-bottom:3px;}
+.result-value{font-size:22px;font-weight:500;color:var(--color-text-primary);}
+.result-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:2px;}
+.breakdown{margin-top:1rem;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.bar-label{font-size:12px;color:var(--color-text-secondary);min-width:130px;}
+.bar-track{flex:1;height:8px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .3s;}
+.bar-val{font-size:12px;font-weight:500;color:var(--color-text-primary);min-width:56px;text-align:right;}
+.status-band{border-radius:var(--border-radius-md);padding:.6rem 1rem;font-size:12px;font-weight:500;margin-bottom:1rem;text-align:center;}
+.status-band.ok{background:#EAF3DE;color:#3B6D11;}
+.status-band.warn{background:#FAEEDA;color:#854F0B;}
+.status-band.crit{background:#FCEBEB;color:#A32D2D;}
+.sep{height:0.5px;background:var(--color-border-tertiary);margin:1rem 0;}
+.hint{font-size:11px;color:var(--color-text-tertiary);margin-top:4px;}
+</style>
+<div class="root">
+  <div id="status-band" class="status-band ok">Custo dentro do benchmark</div>
+
+  <div class="grid2">
+    <div>
+      <div class="section">
+        <div class="sec-label">Volume e produção</div>
+        <div class="slider-row">
+          <span class="slider-label">Carga do ciclo (kg)</span>
+          <input type="range" id="kg" min="20" max="150" step="1" value="80" oninput="calc()">
+          <span class="slider-val" id="v-kg">80 kg</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Duração do ciclo (min)</span>
+          <input type="range" id="dur" min="20" max="90" step="1" value="42" oninput="calc()">
+          <span class="slider-val" id="v-dur">42 min</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Operadores alocados</span>
+          <input type="range" id="ops" min="1" max="5" step="1" value="2" oninput="calc()">
+          <span class="slider-val" id="v-ops">2</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Custo mão de obra (R$/h)</span>
+          <input type="range" id="mow" min="14" max="35" step="1" value="22" oninput="calc()">
+          <span class="slider-val" id="v-mow">R$ 22</span>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sec-label">Insumos</div>
+        <div class="slider-row">
+          <span class="slider-label">Água consumida (L/kg)</span>
+          <input type="range" id="agua" min="4" max="20" step="0.5" value="9" oninput="calc()">
+          <span class="slider-val" id="v-agua">9 L/kg</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Tarifa água + esgoto (R$/m³)</span>
+          <input type="range" id="tagua" min="5" max="25" step="1" value="14" oninput="calc()">
+          <span class="slider-val" id="v-tagua">R$ 14</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Energia (kWh/ciclo)</span>
+          <input type="range" id="kwh" min="2" max="30" step="0.5" value="12" oninput="calc()">
+          <span class="slider-val" id="v-kwh">12 kWh</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Tarifa energia (R$/kWh)</span>
+          <input type="range" id="tkwh" min="0.5" max="1.8" step="0.05" value="0.85" oninput="calc()">
+          <span class="slider-val" id="v-tkwh">R$ 0,85</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Químicos (R$/kg)</span>
+          <input type="range" id="quim" min="0.05" max="0.60" step="0.01" value="0.18" oninput="calc()">
+          <span class="slider-val" id="v-quim">R$ 0,18</span>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sec-label">Qualidade e overhead</div>
+        <div class="slider-row">
+          <span class="slider-label">Taxa de retrabalho (%)</span>
+          <input type="range" id="ret" min="0" max="10" step="0.1" value="3" oninput="calc()">
+          <span class="slider-val" id="v-ret">3,0%</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Overhead fixo rateado (R$/ciclo)</span>
+          <input type="range" id="ovh" min="1" max="20" step="0.5" value="6" oninput="calc()">
+          <span class="slider-val" id="v-ovh">R$ 6,00</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec-label">Custo por ciclo</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;">
+        <div class="result-card">
+          <div class="result-title">Custo total do ciclo</div>
+          <div class="result-value" id="r-total">R$ —</div>
+          <div class="result-sub" id="r-sub">— kg processados</div>
+        </div>
+        <div class="result-card">
+          <div class="result-title">Custo por kg</div>
+          <div class="result-value" id="r-kg">R$ —</div>
+          <div class="result-sub" id="r-bench">benchmark R$ 0,90</div>
+        </div>
+        <div class="result-card">
+          <div class="result-title">Custo por hora de ciclo</div>
+          <div class="result-value" id="r-hora">R$ —</div>
+          <div class="result-sub">por hora de operação</div>
+        </div>
+        <div class="result-card">
+          <div class="result-title">Impacto do retrabalho</div>
+          <div class="result-value" id="r-ret">R$ —</div>
+          <div class="result-sub">custo extra no ciclo</div>
+        </div>
+      </div>
+
+      <div class="sec-label">Decomposição do custo</div>
+      <div class="breakdown">
+        <div class="bar-row">
+          <span class="bar-label">Mão de obra</span>
+          <div class="bar-track"><div class="bar-fill" id="b-mow" style="background:#185FA5"></div></div>
+          <span class="bar-val" id="bv-mow">—</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Energia</span>
+          <div class="bar-track"><div class="bar-fill" id="b-ene" style="background:#BA7517"></div></div>
+          <span class="bar-val" id="bv-ene">—</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Água</span>
+          <div class="bar-track"><div class="bar-fill" id="b-agua" style="background:#1D9E75"></div></div>
+          <span class="bar-val" id="bv-agua">—</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Químicos</span>
+          <div class="bar-track"><div class="bar-fill" id="b-quim" style="background:#534AB7"></div></div>
+          <span class="bar-val" id="bv-quim">—</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Retrabalho</span>
+          <div class="bar-track"><div class="bar-fill" id="b-ret" style="background:#E24B4A"></div></div>
+          <span class="bar-val" id="bv-ret">—</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Overhead fixo</span>
+          <div class="bar-track"><div class="bar-fill" id="b-ovh" style="background:#888780"></div></div>
+          <span class="bar-val" id="bv-ovh">—</span>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+      <div class="sec-label">Simulação de melhoria</div>
+      <div id="insight" style="font-size:12px;color:var(--color-text-secondary);line-height:1.6;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function fmt(v){ return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtKg(v){ return 'R$ '+v.toFixed(2).replace('.',','); }
+function pct(v){ return v.toFixed(1).replace('.',',')+'%'; }
+
+function calc(){
+  const kg = +document.getElementById('kg').value;
+  const dur = +document.getElementById('dur').value;
+  const ops = +document.getElementById('ops').value;
+  const mow = +document.getElementById('mow').value;
+  const agua = +document.getElementById('agua').value;
+  const tagua = +document.getElementById('tagua').value;
+  const kwh = +document.getElementById('kwh').value;
+  const tkwh = +document.getElementById('tkwh').value;
+  const quim = +document.getElementById('quim').value;
+  const ret = +document.getElementById('ret').value;
+  const ovh = +document.getElementById('ovh').value;
+
+  document.getElementById('v-kg').textContent = kg+' kg';
+  document.getElementById('v-dur').textContent = dur+' min';
+  document.getElementById('v-ops').textContent = ops;
+  document.getElementById('v-mow').textContent = 'R$ '+mow;
+  document.getElementById('v-agua').textContent = agua.toFixed(1)+' L/kg';
+  document.getElementById('v-tagua').textContent = 'R$ '+tagua;
+  document.getElementById('v-kwh').textContent = kwh.toFixed(1)+' kWh';
+  document.getElementById('v-tkwh').textContent = 'R$ '+tkwh.toFixed(2).replace('.',',');
+  document.getElementById('v-quim').textContent = 'R$ '+quim.toFixed(2).replace('.',',');
+  document.getElementById('v-ret').textContent = pct(ret);
+  document.getElementById('v-ovh').textContent = 'R$ '+ovh.toFixed(2).replace('.',',');
+
+  const cMow = ops * mow * (dur/60);
+  const cEne = kwh * tkwh;
+  const cAgua = (agua * kg / 1000) * tagua;
+  const cQuim = quim * kg;
+  const cOvh = ovh;
+  const subtotal = cMow + cEne + cAgua + cQuim + cOvh;
+  const cRet = subtotal * (ret/100);
+  const total = subtotal + cRet;
+  const perKg = total / kg;
+  const perHora = total / (dur/60);
+  const bench = 0.90;
+
+  document.getElementById('r-total').textContent = fmt(total);
+  document.getElementById('r-sub').textContent = kg+' kg processados';
+  document.getElementById('r-kg').textContent = fmtKg(perKg);
+  document.getElementById('r-hora').textContent = fmt(perHora);
+  document.getElementById('r-ret').textContent = fmt(cRet);
+
+  const maxVal = Math.max(cMow,cEne,cAgua,cQuim,cRet,cOvh,0.01);
+  function setBar(id,vid,val){
+    document.getElementById(id).style.width=Math.round(val/maxVal*100)+'%';
+    document.getElementById(vid).textContent=fmt(val);
+  }
+  setBar('b-mow','bv-mow',cMow);
+  setBar('b-ene','bv-ene',cEne);
+  setBar('b-agua','bv-agua',cAgua);
+  setBar('b-quim','bv-quim',cQuim);
+  setBar('b-ret','bv-ret',cRet);
+  setBar('b-ovh','bv-ovh',cOvh);
+
+  const band = document.getElementById('status-band');
+  if(perKg <= bench){
+    band.className='status-band ok';
+    band.textContent='Custo dentro do benchmark (R$ '+bench.toFixed(2).replace('.',',')+'/kg)';
+  } else if(perKg <= bench*1.25){
+    band.className='status-band warn';
+    band.textContent='Custo acima do benchmark em '+(((perKg/bench)-1)*100).toFixed(0)+'% — atenção';
+  } else {
+    band.className='status-band crit';
+    band.textContent='Custo crítico: '+(((perKg/bench)-1)*100).toFixed(0)+'% acima do benchmark';
+  }
+
+  const biggest = [
+    {name:'mão de obra',val:cMow,hint:'reduzir operadores alocados ou aumentar carga por ciclo'},
+    {name:'energia',val:cEne,hint:'revisar programa de lavagem e uso fora de horário de ponta'},
+    {name:'água',val:cAgua,hint:'verificar dosagem e possibilidade de reúso de banho'},
+    {name:'químicos',val:cQuim,hint:'calibrar dosagem automática — excesso não melhora qualidade'},
+    {name:'retrabalho',val:cRet,hint:'revisar parâmetros de processo e treinamento do operador'},
+  ].sort((a,b)=>b.val-a.val)[0];
+
+  const saving = (cRet > 0.5) ? ` Zerar o retrabalho economizaria ${fmt(cRet)} neste ciclo.` : '';
+  document.getElementById('insight').textContent =
+    'Maior componente de custo: '+biggest.name+' ('+fmt(biggest.val)+'). Sugestão: '+biggest.hint+'.'+saving+
+    ' Com '+kg+' kg/ciclo e '+Math.round(60/dur*8)+' ciclos/turno de 8h, o custo diário estimado é '+fmt(total*Math.round(60/dur*8))+'.';
+}
+
+calc();
+</script>

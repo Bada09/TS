@@ -1,0 +1,175 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.root{padding:1rem 0;}
+.sec{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-tertiary);margin:1.5rem 0 .75rem;}
+.sec:first-child{margin-top:0;}
+.flow{display:flex;align-items:stretch;gap:0;margin-bottom:1rem;overflow-x:auto;}
+.flow-step{flex:1;min-width:100px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.65rem .75rem;text-align:center;position:relative;}
+.flow-step.active{border-color:#185FA5;background:#E6F1FB;}
+.flow-label{font-size:11px;font-weight:500;color:var(--color-text-primary);}
+.flow-sub{font-size:10px;color:var(--color-text-tertiary);margin-top:2px;}
+.flow-arr{display:flex;align-items:center;padding:0 4px;color:var(--color-text-tertiary);font-size:14px;flex-shrink:0;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.9rem 1rem;}
+.card-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px;}
+.card-body{font-size:12px;color:var(--color-text-secondary);line-height:1.55;}
+.badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;margin-left:6px;}
+.badge.blue{background:#E6F1FB;color:#185FA5;}
+.badge.green{background:#EAF3DE;color:#3B6D11;}
+.badge.amber{background:#FAEEDA;color:#854F0B;}
+.badge.red{background:#FCEBEB;color:#A32D2D;}
+.badge.gray{background:#F1EFE8;color:#5F5E5A;}
+.code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem;color:var(--color-text-secondary);line-height:1.7;}
+.kw{color:#185FA5;}
+.str{color:#BA7517;}
+.cm{color:#B4B2A9;}
+.fn{color:#1D9E75;}
+.sep{height:0.5px;background:var(--color-border-tertiary);margin:.85rem 0;}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.tag{font-size:10px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:4px;padding:2px 7px;color:var(--color-text-secondary);}
+.state-table{width:100%;border-collapse:collapse;font-size:12px;}
+.state-table th{text-align:left;padding:5px 8px;font-size:11px;font-weight:500;color:var(--color-text-tertiary);border-bottom:0.5px solid var(--color-border-tertiary);}
+.state-table td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);}
+.state-table tr:last-child td{border-bottom:none;}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;}
+.dot.g{background:#1D9E75;}.dot.b{background:#185FA5;}.dot.a{background:#BA7517;}.dot.r{background:#E24B4A;}
+.warn-box{background:#FAEEDA;border-radius:var(--border-radius-md);padding:.7rem 1rem;font-size:12px;color:#854F0B;line-height:1.5;margin-top:6px;}
+</style>
+<div class="root">
+
+<div class="sec">Pontos de leitura RFID no fluxo físico</div>
+<div class="flow">
+  <div class="flow-step">
+    <div class="flow-label">Coleta</div>
+    <div class="flow-sub">leitura no cliente</div>
+  </div>
+  <div class="flow-arr">›</div>
+  <div class="flow-step active">
+    <div class="flow-label">Recepção</div>
+    <div class="flow-sub">portal de entrada</div>
+  </div>
+  <div class="flow-arr">›</div>
+  <div class="flow-step active">
+    <div class="flow-label">Triagem</div>
+    <div class="flow-sub">esteira de separação</div>
+  </div>
+  <div class="flow-arr">›</div>
+  <div class="flow-step active">
+    <div class="flow-label">Lavagem</div>
+    <div class="flow-sub">boca da máquina</div>
+  </div>
+  <div class="flow-arr">›</div>
+  <div class="flow-step active">
+    <div class="flow-label">Secagem</div>
+    <div class="flow-sub">entrada na secadora</div>
+  </div>
+  <div class="flow-arr">›</div>
+  <div class="flow-step active">
+    <div class="flow-label">Passadoria</div>
+    <div class="flow-sub">calandra / dobra</div>
+  </div>
+  <div class="flow-arr">›</div>
+  <div class="flow-step active">
+    <div class="flow-label">Expedição</div>
+    <div class="flow-sub">saída para cliente</div>
+  </div>
+</div>
+<p style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:1rem;">Pontos em azul = leitores RFID fixos. Cada passagem gera um evento de localização com timestamp — o centro de controle calcula o tempo em cada etapa e detecta gargalos.</p>
+
+<div class="sec">Estrutura do evento RFID</div>
+<div class="grid2">
+  <div>
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px;">Payload do evento (JSON)</div>
+    <div class="code">{
+  <span class="str">"event_id"</span>: <span class="str">"evt_8f3a..."</span>,
+  <span class="str">"tag_epc"</span>: <span class="str">"E28011702000..."</span>, <span class="cm">// ID único da peça</span>
+  <span class="str">"reader_id"</span>: <span class="str">"reader_lavagem_01"</span>,
+  <span class="str">"checkpoint"</span>: <span class="str">"entrada_lavagem"</span>,
+  <span class="str">"timestamp"</span>: <span class="str">"2026-05-08T14:32:07Z"</span>,
+  <span class="str">"batch_id"</span>: <span class="str">"lote_2026_0508_014"</span>,
+  <span class="str">"client_id"</span>: <span class="str">"hospital_santa_cruz"</span>,
+  <span class="str">"item_type"</span>: <span class="str">"lencol_casal"</span>,
+  <span class="str">"machine_id"</span>: <span class="str">"lav_03"</span>        <span class="cm">// preenchido pelo SCADA</span>
+}</div>
+  </div>
+  <div>
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px;">Tabela item_tracking (relacional)</div>
+    <div class="code"><span class="kw">CREATE TABLE</span> item_tracking (
+  tag_epc      <span class="fn">TEXT</span>        <span class="kw">NOT NULL</span>,
+  checkpoint   <span class="fn">TEXT</span>        <span class="kw">NOT NULL</span>,
+  arrived_at   <span class="fn">TIMESTAMPTZ</span> <span class="kw">NOT NULL</span>,
+  batch_id     <span class="fn">TEXT</span>,
+  client_id    <span class="fn">TEXT</span>,
+  machine_id   <span class="fn">TEXT</span>,
+  cycle_id     <span class="fn">UUID</span>,          <span class="cm">-- FK p/ cycle_metrics</span>
+  sla_deadline <span class="fn">TIMESTAMPTZ</span>,
+  sla_risk     <span class="fn">BOOLEAN</span> <span class="kw">DEFAULT</span> <span class="str">false</span>,
+  <span class="kw">PRIMARY KEY</span> (tag_epc, checkpoint, arrived_at)
+);</div>
+  </div>
+</div>
+
+<div class="sep"></div>
+<div class="sec">Integração SCADA — protocolos e mapeamento</div>
+<div class="grid3">
+  <div class="card">
+    <div class="card-title">OPC-UA <span class="badge blue">preferido</span></div>
+    <div class="card-body">Protocolo moderno com modelo de dados orientado a objetos. Suportado por PLCs Siemens, Rockwell, Schneider. Permite subscrição de variáveis — o servidor só envia quando há mudança (push), sem polling.</div>
+    <div class="tag-row"><span class="tag">Siemens S7-1500</span><span class="tag">Allen-Bradley</span><span class="tag">Beckhoff</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Modbus TCP <span class="badge gray">legado</span></div>
+    <div class="card-body">Protocolo de polling — o sistema pergunta ao PLC a cada N segundos. Simples e universal, mas sem push nativo. Usar quando o equipamento não suporta OPC-UA. Polling a cada 5–10s é suficiente para parâmetros de processo.</div>
+    <div class="tag-row"><span class="tag">equipamentos antigos</span><span class="tag">inversores</span><span class="tag">medidores</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">MQTT <span class="badge green">IoT nativo</span></div>
+    <div class="card-body">Ideal para sensores independentes (pH, turbidez, dosagem). Publish/subscribe com broker central (Mosquitto ou EMQX). Leve, tolerante a conexões instáveis — recomendado para sensores em campo via Wi-Fi ou 4G.</div>
+    <div class="tag-row"><span class="tag">sensores pH</span><span class="tag">fluxômetros</span><span class="tag">medidores energia</span></div>
+  </div>
+</div>
+
+<div class="sec">Mapeamento SCADA → variáveis monitoradas</div>
+<div class="card">
+  <table class="state-table">
+    <thead>
+      <tr><th>Tag SCADA / PLC</th><th>Variável no sistema</th><th>Frequência</th><th>Alerta se</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>LW03.TempAgua</td><td>sensor_readings — temp</td><td>10s</td><td>&gt; setpoint + 5°C</td></tr>
+      <tr><td>LW03.NivelPH</td><td>sensor_readings — ph</td><td>30s</td><td>&lt; 6.5 ou &gt; 9.5</td></tr>
+      <tr><td>LW03.RPMTambor</td><td>sensor_readings — rpm</td><td>5s</td><td>desvio &gt; 10% do setpoint</td></tr>
+      <tr><td>LW03.Status</td><td>machine_events — status</td><td>mudança</td><td>parada não planejada</td></tr>
+      <tr><td>LW03.HorasUso</td><td>machine_events — hours</td><td>1h</td><td>&gt; 85% do intervalo PM</td></tr>
+      <tr><td>DOS01.FluxoQuim</td><td>sensor_readings — chemical_flow</td><td>10s</td><td>&gt; 120% da receita</td></tr>
+      <tr><td>MED01.kWh</td><td>sensor_readings — energy</td><td>1min</td><td>acumulado/ciclo fora do padrão</td></tr>
+      <tr><td>MED02.Litros</td><td>sensor_readings — water_flow</td><td>1min</td><td>L/kg acima do benchmark</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="sec">Lógica de correlação RFID + SCADA</div>
+<div class="grid2">
+  <div class="card">
+    <div class="card-title">Associação peça → ciclo</div>
+    <div class="card-body">Quando o RFID lê um tag na "entrada_lavagem", o sistema consulta qual máquina está em ciclo ativo naquele ponto físico (via SCADA). O cycle_id é preenchido automaticamente no item_tracking — sem digitação manual.</div>
+    <div class="warn-box">Problema comum: lote dividido entre duas máquinas. Solução: o reader de entrada cobre a faixa de uma única máquina — layout físico resolve o problema lógico.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Detecção de peça perdida</div>
+    <div class="card-body">Se um tag aparece na expedição sem ter passado por "entrada_lavagem" ou "saída_secagem", o sistema gera alerta de rastreabilidade quebrada. Se um tag não aparece na expedição 4h após entrar na lavagem, é marcado como "localização desconhecida" e aciona busca ativa.</div>
+    <div class="code" style="margin-top:8px;"><span class="cm">-- peças sem checkpoint de saída há mais de 4h</span>
+<span class="kw">SELECT</span> tag_epc, client_id, arrived_at
+<span class="kw">FROM</span> item_tracking
+<span class="kw">WHERE</span> checkpoint = <span class="str">'entrada_lavagem'</span>
+  <span class="kw">AND</span> arrived_at &lt; <span class="fn">NOW</span>() - <span class="str">INTERVAL '4h'</span>
+  <span class="kw">AND NOT EXISTS</span> (
+    <span class="kw">SELECT</span> 1 <span class="kw">FROM</span> item_tracking t2
+    <span class="kw">WHERE</span> t2.tag_epc = item_tracking.tag_epc
+      <span class="kw">AND</span> t2.checkpoint = <span class="str">'saida_secagem'</span>
+  );</div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAVAÍ - Industrial Laundry Command Center</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Color Palette - Premium Dark Industrial */
+            --bg-deep: #0a0c10;
+            --bg-surface: #14181f;
+            --bg-card: rgba(30, 35, 45, 0.7);
+            --bg-accent: #1e2530;
+            
+            --text-primary: #f0f2f5;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #06b6d4;
+            --purple: #8b5cf6;
+            
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
+            
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            
+            --font-main: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --glass-bg: rgba(20, 24, 31, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2rem;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            flex: 1;
+            list-style: none;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 1.5rem 0 0.5rem 0.5rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            background-color: var(--bg-accent);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .nav-link i {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* --- Main Content --- */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--bg-surface);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .lang-selector {
+            display: flex;
+            background-color: var(--bg-accent);
+            padding: 4px;
+            border-radius: 8px;
+            gap: 4px;
+        }
+
+        .lang-btn {
+            padding: 4px 8px;
+            border: none;
+            background: none;
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+        }
+
+        /* --- View Container --- */
+        .view-container {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.05), transparent);
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Dashboard Components --- */
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-icon {
+            color: var(--primary);
+            padding: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .stat-trend {
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trend-up { color: var(--success); }
+        .trend-down { color: var(--danger); }
+
+        /* --- Machine Monitor --- */
+        .machine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .machine-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .machine-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .machine-header {
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .machine-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-running { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-idle { background: rgba(148, 163, 184, 0.2); color: var(--text-secondary); }
+        .status-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .status-error { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        .machine-body {
+            padding: 1.5rem;
+        }
+
+        .telemetry-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .tele-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .tele-value {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            margin-top: 1.5rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-bottom: 6px;
+        }
+
+        .bar-bg {
+            height: 6px;
+            background: var(--bg-accent);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--info));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .intervention-footer {
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-primary);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn:hover { background: var(--bg-accent); }
+        .btn-danger { color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+
+        /* --- Tables --- */
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .custom-table th {
+            text-align: left;
+            padding: 12px;
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .custom-table td {
+            padding: 14px 12px;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .custom-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* --- Charts --- */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            height: 350px;
+        }
+
+        /* --- Simulator Styles --- */
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .slider-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            min-width: 200px;
+        }
+        .slider-val {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 60px;
+            text-align: right;
+        }
+        input[type=range] {
+            flex: 1;
+            accent-color: var(--primary);
+        }
+
+        .breakdown-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .breakdown-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 120px;
+        }
+        .breakdown-bar-bg {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-accent);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .breakdown-bar-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        /* --- Database/AI Section Styles --- */
+        .db-card {
+            border-left: 4px solid var(--primary);
+        }
+        .field-row {
+            display: flex;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+        .field-name { font-weight: 600; color: var(--text-primary); font-size: 0.85rem; min-width: 120px; }
+        .field-type { font-family: var(--font-mono); color: var(--info); font-size: 0.75rem; }
+        .field-desc { color: var(--text-tertiary); font-size: 0.8rem; flex: 1; }
+
+        .code-block {
+            background: var(--bg-deep);
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #d1d5db;
+            overflow-x: auto;
+            margin-top: 1rem;
+            border: 1px solid var(--border);
+        }
+        .code-kw { color: #93c5fd; }
+        .code-fn { color: #bef264; }
+        .code-str { color: #fdba74; }
+
+        /* --- Notifications Toast --- */
+        #notification-toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i data-lucide="waves" color="white"></i>
+            </div>
+            <span class="logo-text">LAVAÍ</span>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-label" data-i18n="nav_op_control">Operação & Controle</div>
+            <div class="nav-item">
+                <a class="nav-link active" onclick="switchView('dashboard', this)">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span data-i18n="nav_dashboard">Dashboard</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" onclick="switchView('monitor', this)">
+                    <i data-lucide="activity"></i>
+                    <span data-i18n="nav_monitor">Monitoramento</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" onclick="switchView('intervention', this)">
+                    <i data-lucide="zap"></i>
+                    <span data-i18n="nav_intervention">Intervenção</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" onclick="switchView('rfid', this)">
+                    <i data-lucide="rfid"></i>
+                    <span data-i18n="nav_rfid">Rastreamento RFID</span>
+                </a>
+            </div>
+
+            <div class="nav-label" data-i18n="nav_mgmt_ai">Gestão & Inteligência</div>
+            <div class="nav-item">
+                <a class="nav-link" onclick="switchView('client-portal', this)">
+                    <i data-lucide="users"></i>
+                    <span data-i18n="nav_client_portal">Portal do Cliente</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" onclick="switchView('simulator', this)">
+                    <i data-lucide="calculator"></i>
+                    <span data-i18n="nav_simulator">Simulador de Custo</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" onclick="switchView('alerts', this)">
+                    <i data-lucide="bell-ring"></i>
+                    <span data-i18n="nav_alerts">Motor de Alertas</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" onclick="switchView('reports', this)">
+                    <i data-lucide="bar-chart-3"></i>
+                    <span data-i18n="nav_reports">Relatórios Hub</span>
+                </a>
+            </div>
+
+            <div class="nav-label" data-i18n="nav_infra">Infraestrutura</div>
+            <div class="nav-item">
+                <a class="nav-link" onclick="switchView('architecture', this)">
+                    <i data-lucide="database"></i>
+                    <span data-i18n="nav_architecture">Arquitetura de Dados</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="nav-item">
+                <a class="nav-link">
+                    <i data-lucide="settings"></i>
+                    <span data-i18n="nav_settings">Configurações</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header>
+            <div class="header-left">
+                <span class="page-title" id="current-view-title" data-i18n="nav_dashboard">Dashboard</span>
+            </div>
+            <div class="header-right">
+                <div class="lang-selector">
+                    <button class="lang-btn active" onclick="setLanguage('pt')">PT</button>
+                    <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+                    <button class="lang-btn" onclick="setLanguage('tr')">TR</button>
+                </div>
+                <div class="header-icon">
+                    <i data-lucide="bell" size="20"></i>
+                </div>
+                <div class="user-profile">
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.8rem; font-weight: 600;">Admin User</div>
+                        <div style="font-size: 0.7rem; color: var(--text-tertiary);">Superuser</div>
+                    </div>
+                    <div class="avatar"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="view-container">
+            
+            <!-- VIEW: DASHBOARD (Resumo Global) -->
+            <div id="view-dashboard" class="view active">
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-i18n="stat_oee">OEE Global</span>
+                            <i data-lucide="gauge" class="stat-icon"></i>
+                        </div>
+                        <div class="stat-value" id="stat-oee-val">84.2%</div>
+                        <div class="stat-trend trend-up">
+                            <i data-lucide="trending-up" size="14"></i> +2.4% <span data-i18n="vs_yesterday">vs ontem</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-i18n="stat_active_cycles">Ciclos Ativos</span>
+                            <i data-lucide="refresh-cw" class="stat-icon"></i>
+                        </div>
+                        <div class="stat-value" id="stat-cycles-val">12</div>
+                        <div class="stat-trend">
+                            <span data-i18n="stat_active_machines">8 máquinas operando</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-i18n="stat_water_cons">Consumo Água</span>
+                            <i data-lucide="droplets" class="stat-icon" style="color: #06b6d4; background: rgba(6, 182, 212, 0.1);"></i>
+                        </div>
+                        <div class="stat-value" id="stat-water-val">4.2m³</div>
+                        <div class="stat-trend trend-down">
+                            <i data-lucide="trending-down" size="14"></i> -12% <span data-i18n="vs_target">vs meta</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-i18n="stat_alarms">Alarmes Ativos</span>
+                            <i data-lucide="alert-triangle" class="stat-icon" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);"></i>
+                        </div>
+                        <div class="stat-value" id="stat-alarms-val">02</div>
+                        <div class="stat-trend">
+                            <span data-i18n="stat_severity">Crítico: 0 | Médio: 2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <div class="card-title" style="margin-bottom: 1rem;" data-i18n="chart_production">Produção Diária (kg)</div>
+                        <canvas id="productionChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="card-title" style="margin-bottom: 1rem;" data-i18n="chart_utilities">Consumo de Utilidades</div>
+                        <canvas id="utilityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MONITOR (Telemetria) -->
+            <div id="view-monitor" class="view">
+                <div class="machine-grid" id="machine-monitor-grid">
+                    <!-- Machine cards generated by JS -->
+                </div>
+            </div>
+
+            <!-- VIEW: INTERVENTION -->
+            <div id="view-intervention" class="view">
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <h3 data-i18n="intervention_panel">Painel de Intervenção Rápida</h3>
+                        <span class="badge status-running" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);" data-i18n="emergency_mode">Modo Emergência Disponível</span>
+                    </div>
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="col_machine">Máquina</th>
+                                <th data-i18n="col_status">Status Atual</th>
+                                <th data-i18n="col_parameters">Parâmetros Críticos</th>
+                                <th data-i18n="col_actions">Ações de Intervenção</th>
+                            </tr>
+                        </thead>
+                        <tbody id="intervention-table-body">
+                            <!-- Rows generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW: CLIENT PORTAL (Tracking p/ Clientes) -->
+            <div id="view-client-portal" class="view">
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <span class="stat-label" data-i18n="stat_client_batches">Lotes Ativos (Hospital Santa Cruz)</span>
+                        <div class="stat-value">04</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label" data-i18n="stat_client_sla">Cumprimento de SLA</span>
+                        <div class="stat-value">98.2%</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label" data-i18n="stat_client_items">Peças em Processo</span>
+                        <div class="stat-value">1,240</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label" data-i18n="stat_client_ready">Prontas p/ Retirada</span>
+                        <div class="stat-value">380</div>
+                    </div>
+                </div>
+                
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <h3 data-i18n="client_batches_title">Rastreamento de Lotes</h3>
+                    </div>
+                    <div id="client-batches-container">
+                        <!-- Batches with steps generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: SIMULATOR (Custo por Ciclo) -->
+            <div id="view-simulator" class="view">
+                <div id="sim-status-band" class="status-pill" style="width: 100%; text-align: center; margin-bottom: 1.5rem; padding: 12px; font-weight: 600;">Custo dentro do benchmark</div>
+                
+                <div class="chart-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="table-card">
+                        <h3 style="margin-bottom: 1.5rem;" data-i18n="sim_params">Parâmetros de Produção</h3>
+                        
+                        <div class="slider-row">
+                            <span class="slider-label" data-i18n="sim_load">Carga do ciclo (kg)</span>
+                            <input type="range" id="sim-kg" min="20" max="150" step="1" value="80" oninput="runSim()">
+                            <span class="slider-val" id="v-sim-kg">80 kg</span>
+                        </div>
+                        <div class="slider-row">
+                            <span class="slider-label" data-i18n="sim_dur">Duração do ciclo (min)</span>
+                            <input type="range" id="sim-dur" min="20" max="90" step="1" value="42" oninput="runSim()">
+                            <span class="slider-val" id="v-sim-dur">42 min</span>
+                        </div>
+                        <div class="slider-row">
+                            <span class="slider-label" data-i18n="sim_ops">Operadores alocados</span>
+                            <input type="range" id="sim-ops" min="1" max="5" step="1" value="2" oninput="runSim()">
+                            <span class="slider-val" id="v-sim-ops">2</span>
+                        </div>
+                        
+                        <h3 style="margin: 2rem 0 1rem 0;" data-i18n="sim_utilities">Insumos & Tarifas</h3>
+                        <div class="slider-row">
+                            <span class="slider-label" data-i18n="sim_water">Água consumida (L/kg)</span>
+                            <input type="range" id="sim-water" min="4" max="20" step="0.5" value="9" oninput="runSim()">
+                            <span class="slider-val" id="v-sim-water">9 L/kg</span>
+                        </div>
+                        <div class="slider-row">
+                            <span class="slider-label" data-i18n="sim_energy">Energia (kWh/ciclo)</span>
+                            <input type="range" id="sim-energy" min="2" max="30" step="0.5" value="12" oninput="runSim()">
+                            <span class="slider-val" id="v-sim-energy">12 kWh</span>
+                        </div>
+                    </div>
+
+                    <div class="table-card">
+                        <h3 style="margin-bottom: 1.5rem;" data-i18n="sim_results">Resultado do Ciclo</h3>
+                        
+                        <div class="grid-stats" style="grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem;">
+                            <div class="stat-card" style="padding: 1rem; border-radius: 12px;">
+                                <span class="stat-label" data-i18n="sim_total_cost">Custo Total</span>
+                                <div class="stat-value" id="r-sim-total" style="font-size: 1.5rem;">R$ 154.20</div>
+                            </div>
+                            <div class="stat-card" style="padding: 1rem; border-radius: 12px;">
+                                <span class="stat-label" data-i18n="sim_cost_kg">Custo por kg</span>
+                                <div class="stat-value" id="r-sim-kg" style="font-size: 1.5rem;">R$ 1.92</div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-bottom: 1rem;" data-i18n="sim_breakdown">Decomposição do Custo</h3>
+                        <div id="sim-breakdown-list">
+                            <!-- Generated by JS -->
+                        </div>
+
+                        <div id="sim-insight" style="margin-top: 1.5rem; padding: 15px; background: var(--bg-accent); border-radius: 12px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+                            <!-- Insight text -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: ALERTS (Motor de Regras) -->
+            <div id="view-alerts" class="view">
+                <div class="machine-grid">
+                    <div class="table-card db-card">
+                        <h3 data-i18n="alert_p1" style="margin-bottom:1rem;">Prioridade P1 — Ação Imediata</h3>
+                        <div id="alerts-p1-list"></div>
+                    </div>
+                    <div class="table-card" style="border-left: 4px solid var(--warning);">
+                        <h3 data-i18n="alert_p2" style="margin-bottom:1rem;">Prioridade P2 — Atenção Turno</h3>
+                        <div id="alerts-p2-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: REPORTS (Histórico Hub) -->
+            <div id="view-reports" class="view">
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <span class="stat-label" data-i18n="stat_total_kg">Total Processado (Mês)</span>
+                        <div class="stat-value">124,500 kg</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label" data-i18n="stat_efficiency">Eficiência Energética</span>
+                        <div class="stat-value">0.82 kWh/kg</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label" data-i18n="stat_uptime">Disponibilidade</span>
+                        <div class="stat-value">98.5%</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label" data-i18n="stat_reprocess">Índice Reprocesso</span>
+                        <div class="stat-value">1.2%</div>
+                    </div>
+                </div>
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <h3 data-i18n="report_history">Histórico de Lotes e Desempenho</h3>
+                        <button class="btn" style="width: auto; padding: 5px 15px;"><i data-lucide="download"></i> Export PDF</button>
+                    </div>
+                    <canvas id="efficiencyHistoryChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <!-- VIEW: RFID -->
+            <div id="view-rfid" class="view">
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <h3 data-i18n="rfid_tracking">Rastreabilidade em Tempo Real (RFID)</h3>
+                        <div class="stat-trend"><i data-lucide="radio" class="trend-up"></i> 14 Antenas Ativas</div>
+                    </div>
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>EPC Tag</th>
+                                <th data-i18n="col_item">Item</th>
+                                <th data-i18n="col_last_seen">Último Checkpoint</th>
+                                <th data-i18n="col_time">Horário</th>
+                                <th data-i18n="col_batch">Lote</th>
+                                <th data-i18n="col_status">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rfid-table-body">
+                            <!-- Rows generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW: ARCHITECTURE (AI & Dados) -->
+            <div id="view-architecture" class="view">
+                <div class="grid-stats" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="stat-card db-card">
+                        <h3 style="font-size: 1rem;" data-i18n="db_time_series">TimescaleDB</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-tertiary);" data-i18n="db_time_series_desc">Armazenamento de alta performance para métricas de sensores (raw).</p>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--success);">
+                        <h3 style="font-size: 1rem;" data-i18n="db_relational">PostgreSQL</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-tertiary);" data-i18n="db_relational_desc">Dados mestres de clientes, contratos e rastreabilidade de itens.</p>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--info);">
+                        <h3 style="font-size: 1rem;" data-i18n="db_ai_model">AI Engine</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-tertiary);" data-i18n="db_ai_model_desc">Modelagem preditiva de falhas (MTBF) e otimização de carga.</p>
+                    </div>
+                </div>
+
+                <div class="chart-grid" style="margin-top: 1.5rem;">
+                    <div class="table-card">
+                        <h3 data-i18n="schema_readings" style="margin-bottom:1rem;">Esquema: sensor_readings</h3>
+                        <div class="field-row"><span class="field-name">time</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">PK - Índice temporal principal</span></div>
+                        <div class="field-row"><span class="field-name">machine_id</span><span class="field-type">TEXT</span><span class="field-desc">Tag de identificação da máquina</span></div>
+                        <div class="field-row"><span class="field-name">metric</span><span class="field-type">TEXT</span><span class="field-desc">Tipo (temp, ph, rpm, vibr)</span></div>
+                        <div class="field-row"><span class="field-name">value</span><span class="field-type">DOUBLE</span><span class="field-desc">Leitura bruta do PLC</span></div>
+                    </div>
+                    <div class="table-card">
+                        <h3 data-i18n="sql_optimization" style="margin-bottom:1rem;">SQL de Otimização (OEE)</h3>
+                        <div class="code-block">
+                            <span class="code-kw">SELECT</span> machine_id, <br>
+                            &nbsp;&nbsp;<span class="code-fn">AVG</span>(cost_total / kg_loaded) <span class="code-kw">AS</span> efficiency <br>
+                            <span class="code-kw">FROM</span> cycle_metrics <br>
+                            <span class="code-kw">WHERE</span> started_at > <span class="code-fn">NOW</span>() - <span class="code-str">'24h'</span> <br>
+                            <span class="code-kw">GROUP BY</span> machine_id;
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="notification-toast">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i data-lucide="info"></i>
+            <span id="toast-message">Comando enviado com sucesso</span>
+        </div>
+    </div>
+
+    <script>
+        // --- Localization Data ---
+        const i18n = {
+            pt: {
+                nav_op_control: "Operação & Controle",
+                nav_mgmt_ai: "Gestão & Inteligência",
+                nav_infra: "Infraestrutura",
+                nav_dashboard: "Dashboard",
+                nav_monitor: "Monitoramento",
+                nav_intervention: "Intervenção",
+                nav_reports: "Relatórios Hub",
+                nav_rfid: "Rastreamento RFID",
+                nav_client_portal: "Portal do Cliente",
+                nav_simulator: "Simulador de Custo",
+                nav_alerts: "Motor de Alertas",
+                nav_architecture: "Arquitetura de Dados",
+                nav_settings: "Configurações",
+                stat_oee: "OEE Global",
+                stat_active_cycles: "Ciclos Ativos",
+                stat_water_cons: "Consumo Água",
+                stat_alarms: "Alarmes Ativos",
+                vs_yesterday: "vs ontem",
+                vs_target: "vs meta",
+                stat_active_machines: "8 máquinas operando",
+                stat_severity: "Crítico: 0 | Médio: 2",
+                chart_production: "Produção Diária (kg)",
+                chart_utilities: "Consumo de Utilidades",
+                intervention_panel: "Painel de Intervenção Rápida",
+                emergency_mode: "Modo Emergência Disponível",
+                col_machine: "Máquina",
+                col_status: "Status Atual",
+                col_parameters: "Parâmetros Críticos",
+                col_actions: "Ações de Intervenção",
+                col_item: "Item",
+                col_last_seen: "Último Checkpoint",
+                col_time: "Horário",
+                col_batch: "Lote",
+                btn_emergency: "Parada Emerg.",
+                btn_drain: "Drenar",
+                btn_refill: "Abastecer",
+                btn_boost: "Acelerar",
+                stat_total_kg: "Total Processado (Mês)",
+                stat_efficiency: "Eficiência Energética",
+                stat_uptime: "Disponibilidade",
+                stat_reprocess: "Índice Reprocesso",
+                report_history: "Histórico de Lotes e Desempenho",
+                rfid_tracking: "Rastreabilidade em Tempo Real (RFID)",
+                toast_command: "Comando enviado para ",
+                stat_client_batches: "Lotes Ativos (Hospital Santa Cruz)",
+                stat_client_sla: "SLA Cumprido",
+                stat_client_items: "Peças em Processamento",
+                stat_client_ready: "Prontas para Retirada",
+                client_batches_title: "Monitoramento de Lotes em Andamento",
+                sim_params: "Parâmetros de Produção",
+                sim_load: "Carga do ciclo (kg)",
+                sim_dur: "Duração do ciclo (min)",
+                sim_ops: "Operadores alocados",
+                sim_utilities: "Insumos & Tarifas",
+                sim_water: "Água consumida (L/kg)",
+                sim_energy: "Energia (kWh/ciclo)",
+                sim_results: "Resultado do Ciclo",
+                sim_total_cost: "Custo Total Ciclo",
+                sim_cost_kg: "Custo por kg",
+                sim_breakdown: "Decomposição do Custo",
+                alert_p1: "Prioridade P1 - Crítico",
+                alert_p2: "Prioridade P2 - Turno",
+                db_time_series: "TimescaleDB (Séries Temporais)",
+                db_relational: "PostgreSQL (Mestres)",
+                db_ai_model: "AI Engine (Preditivo)"
+            },
+            en: {
+                nav_op_control: "Operation & Control",
+                nav_mgmt_ai: "Management & Intelligence",
+                nav_infra: "Infrastructure",
+                nav_dashboard: "Dashboard",
+                nav_monitor: "Monitoring",
+                nav_intervention: "Intervention",
+                nav_reports: "Reports Hub",
+                nav_rfid: "RFID Tracking",
+                nav_client_portal: "Client Portal",
+                nav_simulator: "Cost Simulator",
+                nav_alerts: "Alert Engine",
+                nav_architecture: "Data Architecture",
+                nav_settings: "Settings",
+                stat_oee: "Global OEE",
+                stat_active_cycles: "Active Cycles",
+                stat_water_cons: "Water Usage",
+                stat_alarms: "Active Alarms",
+                vs_yesterday: "vs yesterday",
+                vs_target: "vs target",
+                stat_active_machines: "8 machines running",
+                stat_severity: "Critical: 0 | Med: 2",
+                chart_production: "Daily Production (kg)",
+                chart_utilities: "Utility Consumption",
+                intervention_panel: "Rapid Intervention Panel",
+                emergency_mode: "Emergency Mode Available",
+                col_machine: "Machine",
+                col_status: "Current Status",
+                col_parameters: "Critical Parameters",
+                col_actions: "Intervention Actions",
+                col_item: "Item",
+                col_last_seen: "Last Checkpoint",
+                col_time: "Time",
+                col_batch: "Batch",
+                btn_emergency: "E-Stop",
+                btn_drain: "Drain",
+                btn_refill: "Refill",
+                btn_boost: "Boost",
+                stat_total_kg: "Total Processed (Month)",
+                stat_efficiency: "Energy Efficiency",
+                stat_uptime: "Uptime",
+                stat_reprocess: "Reprocess Rate",
+                report_history: "Batch & Performance History",
+                rfid_tracking: "Real-Time Traceability (RFID)",
+                toast_command: "Command sent to ",
+                stat_client_batches: "Active Batches (Hospital)",
+                stat_client_sla: "SLA Compliant",
+                stat_client_items: "Items in Process",
+                stat_client_ready: "Ready for Pickup",
+                client_batches_title: "Active Batch Monitoring",
+                sim_params: "Production Parameters",
+                sim_load: "Batch load (kg)",
+                sim_dur: "Cycle duration (min)",
+                sim_ops: "Allocated operators",
+                sim_utilities: "Utilities & Rates",
+                sim_water: "Water usage (L/kg)",
+                sim_energy: "Energy (kWh/cycle)",
+                sim_results: "Cycle Result",
+                sim_total_cost: "Total Cycle Cost",
+                sim_cost_kg: "Cost per kg",
+                sim_breakdown: "Cost Breakdown",
+                alert_p1: "Priority P1 - Critical",
+                alert_p2: "Priority P2 - Shift",
+                db_time_series: "TimescaleDB (Time Series)",
+                db_relational: "PostgreSQL (Master Data)",
+                db_ai_model: "AI Engine (Predictive)"
+            },
+            tr: {
+                nav_op_control: "Operasyon ve Kontrol",
+                nav_mgmt_ai: "Yönetim ve Zeka",
+                nav_infra: "Altyapı",
+                nav_dashboard: "Gösterge Paneli",
+                nav_monitor: "İzleme",
+                nav_intervention: "Müdahale",
+                nav_reports: "Rapor Hub",
+                nav_rfid: "RFID Takibi",
+                nav_client_portal: "Müşteri Portalı",
+                nav_simulator: "Maliyet Simülatörü",
+                nav_alerts: "Alarm Motoru",
+                nav_architecture: "Veri Mimarisi",
+                nav_settings: "Ayarlar",
+                stat_oee: "Küresel OEE",
+                stat_active_cycles: "Aktif Döngüler",
+                stat_water_cons: "Su Tüketimi",
+                stat_alarms: "Aktif Alarmlar",
+                vs_yesterday: "düne göre",
+                vs_target: "hedefe göre",
+                stat_active_machines: "8 makine çalışıyor",
+                stat_severity: "Kritik: 0 | Orta: 2",
+                chart_production: "Günlük Üretim (kg)",
+                chart_utilities: "Hizmet Tüketimi",
+                intervention_panel: "Hızlı Müdahale Paneli",
+                emergency_mode: "Acil Mod Mevcut",
+                col_machine: "Makine",
+                col_status: "Mevcut Durum",
+                col_parameters: "Kritik Parametreler",
+                col_actions: "Müdahale Eylemleri",
+                col_item: "Öğe",
+                col_last_seen: "Son Kontrol Noktası",
+                col_time: "Zaman",
+                col_batch: "Parti",
+                btn_emergency: "Acil Durdurma",
+                btn_drain: "Tahliye",
+                btn_refill: "Doldur",
+                btn_boost: "Hızlandır",
+                stat_total_kg: "Toplam İşlenen (Ay)",
+                stat_efficiency: "Enerji Verimliliği",
+                stat_uptime: "Çalışma Süresi",
+                stat_reprocess: "Yeniden İşleme Oranı",
+                report_history: "Parti ve Performans Geçmişi",
+                rfid_tracking: "Gerçek Zamanlı İzlenebilirlik (RFID)",
+                toast_command: "Komut gönderildi: ",
+                stat_client_batches: "Aktif Partiler (Hastane)",
+                stat_client_sla: "SLA Uyumu",
+                stat_client_items: "İşlemdeki Öğeler",
+                stat_client_ready: "Teslime Hazır",
+                client_batches_title: "Aktif Parti İzleme",
+                sim_params: "Üretim Parametreleri",
+                sim_load: "Parti yükü (kg)",
+                sim_dur: "Döngü süresi (dak)",
+                sim_ops: "Atanan operatörler",
+                sim_utilities: "Hizmetler ve Oranlar",
+                sim_water: "Su kullanımı (L/kg)",
+                sim_energy: "Enerji (kWh/döngü)",
+                sim_results: "Döngü Sonucu",
+                sim_total_cost: "Toplam Döngü Maliyeti",
+                sim_cost_kg: "kg Başına Maliyet",
+                sim_breakdown: "Maliyet Dağılımı",
+                alert_p1: "Öncelik P1 - Kritik",
+                alert_p2: "Öncelik P2 - Vardiya",
+                db_time_series: "TimescaleDB (Zaman Serisi)",
+                db_relational: "PostgreSQL (Ana Veri)",
+                db_ai_model: "AI Motoru (Tahmin)"
+            }
+        };
+
+        let currentLang = 'pt';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    el.textContent = i18n[lang][key];
+                }
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+            });
+            // Update dynamic parts
+            const activeView = document.querySelector('.view.active').id;
+            if(activeView === 'view-monitor') renderMachines();
+            if(activeView === 'view-intervention') renderIntervention();
+            if(activeView === 'view-simulator') runSim();
+            if(activeView === 'view-client-portal') renderClientPortal();
+            if(activeView === 'view-alerts') renderAlerts();
+        }
+
+        // --- View Switching ---
+        function switchView(viewId, el) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            el.classList.add('active');
+            
+            const titleKey = el.querySelector('span').getAttribute('data-i18n');
+            const titleEl = document.getElementById('current-view-title');
+            titleEl.setAttribute('data-i18n', titleKey);
+            titleEl.textContent = i18n[currentLang][titleKey];
+
+            // Render specific content
+            if(viewId === 'monitor') renderMachines();
+            if(viewId === 'intervention') renderIntervention();
+            if(viewId === 'rfid') renderRFID();
+            if(viewId === 'client-portal') renderClientPortal();
+            if(viewId === 'simulator') runSim();
+            if(viewId === 'alerts') renderAlerts();
+        }
+
+        // --- Data & Components ---
+
+        // Machines Data
+        const machines = [
+            { id: 'LW-01', name: 'Lavadora Túnel 01', type: 'washer', status: 'running', temp: 65, ph: 8.2, level: 85, progress: 65, timeRemaining: '12 min' },
+            { id: 'LW-02', name: 'Lavadora Túnel 02', type: 'washer', status: 'running', temp: 62, ph: 8.0, level: 80, progress: 22, timeRemaining: '45 min' },
+            { id: 'DR-01', name: 'Secadora Industrial 01', type: 'dryer', status: 'running', temp: 85, ph: 0, level: 0, progress: 88, timeRemaining: '4 min' },
+            { id: 'DR-02', name: 'Secadora Industrial 02', type: 'dryer', status: 'idle', temp: 25, ph: 0, level: 0, progress: 0, timeRemaining: '---' },
+            { id: 'CA-01', name: 'Calandra 01', type: 'ironer', status: 'warning', temp: 180, ph: 0, level: 0, progress: 100, timeRemaining: 'Manut.' },
+            { id: 'LW-03', name: 'Lavadora Horizontal', type: 'washer', status: 'error', temp: 40, ph: 7.2, level: 10, progress: 5, timeRemaining: 'Fault' }
+        ];
+
+        function renderMachines() {
+            const grid = document.getElementById('machine-monitor-grid');
+            grid.innerHTML = '';
+            machines.forEach(m => {
+                const card = document.createElement('div');
+                card.className = 'machine-card';
+                card.innerHTML = `
+                    <div class="machine-header">
+                        <span class="machine-name"><i data-lucide="${m.type === 'washer' ? 'droplet' : 'sun'}"></i> ${m.name}</span>
+                        <span class="status-pill status-${m.status}">${m.status}</span>
+                    </div>
+                    <div class="machine-body">
+                        <div class="telemetry-row"><span class="tele-label">ID</span><span class="tele-value">${m.id}</span></div>
+                        <div class="telemetry-row"><span class="tele-label">Temperatura</span><span class="tele-value">${m.temp}°C</span></div>
+                        ${m.type === 'washer' ? `<div class="telemetry-row"><span class="tele-label">Nível pH</span><span class="tele-value">${m.ph}</span></div>` : ''}
+                        <div class="progress-container">
+                            <div class="progress-info"><span>Progresso</span><span>${m.timeRemaining}</span></div>
+                            <div class="bar-bg"><div class="bar-fill" style="width: ${m.progress}%"></div></div>
+                        </div>
+                    </div>
+                    <div class="intervention-footer">
+                        <button class="btn btn-danger" onclick="sendIntervention('${m.id}', 'E-STOP')"><i data-lucide="octagon"></i> Stop</button>
+                        <button class="btn" onclick="sendIntervention('${m.id}', 'REFILL')"><i data-lucide="database"></i> Data</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function renderIntervention() {
+            const body = document.getElementById('intervention-table-body');
+            body.innerHTML = '';
+            machines.forEach(m => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><div style="font-weight: 600;">${m.name}</div><div style="font-size: 0.7rem; color: var(--text-tertiary);">${m.id}</div></td>
+                    <td><span class="status-pill status-${m.status}">${m.status}</span></td>
+                    <td><div style="font-size: 0.8rem;">T: ${m.temp}°C | PH: ${m.ph}</div><div style="width: 100px; height: 4px; background: #333; margin-top: 4px;"><div style="width: ${m.progress}%; background: var(--primary); height: 100%;"></div></div></td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn btn-danger" onclick="sendIntervention('${m.id}', 'E-STOP')">${i18n[currentLang].btn_emergency}</button>
+                            <button class="btn" onclick="sendIntervention('${m.id}', 'DRAIN')">${i18n[currentLang].btn_drain}</button>
+                            <button class="btn" onclick="sendIntervention('${m.id}', 'BOOST')">${i18n[currentLang].btn_boost}</button>
+                        </div>
+                    </td>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        // Client Portal Logic
+        function renderClientPortal() {
+            const container = document.getElementById('client-batches-container');
+            container.innerHTML = `
+                <div class="table-card" style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 1rem;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 1rem;">
+                        <span style="font-weight:600;">Lote 014 — 312 peças</span>
+                        <span class="badge status-running">Secagem</span>
+                    </div>
+                    <div style="display:flex; gap: 2px; margin-bottom: 10px;">
+                        <div style="flex:1; height:6px; background:var(--success); border-radius: 3px 0 0 3px;"></div>
+                        <div style="flex:1; height:6px; background:var(--success);"></div>
+                        <div style="flex:1; height:6px; background:var(--primary);"></div>
+                        <div style="flex:1; height:6px; background:var(--bg-accent);"></div>
+                        <div style="flex:1; height:6px; background:var(--bg-accent); border-radius: 0 3px 3px 0;"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size: 0.75rem; color:var(--text-tertiary);">
+                        <span>Recepção</span><span>Lavagem</span><span>Secagem</span><span>Passadoria</span><span>Pronto</span>
+                    </div>
+                </div>
+                <div class="table-card" style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 1rem; margin-top:10px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 1rem;">
+                        <span style="font-weight:600;">Lote 015 — 458 peças</span>
+                        <span class="badge status-running" style="background:rgba(16,185,129,0.1); color:var(--success);">Lavagem</span>
+                    </div>
+                    <div style="display:flex; gap: 2px; margin-bottom: 10px;">
+                        <div style="flex:1; height:6px; background:var(--success); border-radius: 3px 0 0 3px;"></div>
+                        <div style="flex:1; height:6px; background:var(--primary);"></div>
+                        <div style="flex:1; height:6px; background:var(--bg-accent);"></div>
+                        <div style="flex:1; height:6px; background:var(--bg-accent);"></div>
+                        <div style="flex:1; height:6px; background:var(--bg-accent); border-radius: 0 3px 3px 0;"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size: 0.75rem; color:var(--text-tertiary);">
+                        <span>Recepção</span><span>Lavagem</span><span>Secagem</span><span>Passadoria</span><span>Pronto</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Simulator Logic
+        function runSim() {
+            const kg = +document.getElementById('sim-kg').value;
+            const dur = +document.getElementById('sim-dur').value;
+            const ops = +document.getElementById('sim-ops').value;
+            const water = +document.getElementById('sim-water').value;
+            const energy = +document.getElementById('sim-energy').value;
+
+            document.getElementById('v-sim-kg').textContent = kg + ' kg';
+            document.getElementById('v-sim-dur').textContent = dur + ' min';
+            document.getElementById('v-sim-ops').textContent = ops;
+            document.getElementById('v-sim-water').textContent = water + ' L/kg';
+            document.getElementById('v-sim-energy').textContent = energy + ' kWh';
+
+            const cMow = ops * 22 * (dur/60);
+            const cEne = energy * 0.85;
+            const cAgua = (water * kg / 1000) * 14;
+            const cQuim = 0.18 * kg;
+            const total = cMow + cEne + cAgua + cQuim + 6; // +6 overhead
+            const perKg = total / kg;
+
+            document.getElementById('r-sim-total').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+            document.getElementById('r-sim-kg').textContent = 'R$ ' + perKg.toFixed(2).replace('.', ',');
+
+            const band = document.getElementById('sim-status-band');
+            if(perKg < 1.0) {
+                band.style.background = 'rgba(16,185,129,0.2)';
+                band.style.color = 'var(--success)';
+                band.textContent = 'Custo dentro do benchmark (R$ 0,90 - 1,00/kg)';
+            } else {
+                band.style.background = 'rgba(245,158,11,0.2)';
+                band.style.color = 'var(--warning)';
+                band.textContent = 'Custo acima do benchmark. Revise parâmetros.';
+            }
+
+            const list = document.getElementById('sim-breakdown-list');
+            list.innerHTML = `
+                ${renderBar('Mão de Obra', cMow, total, '#3b82f6')}
+                ${renderBar('Energia', cEne, total, '#f59e0b')}
+                ${renderBar('Água', cAgua, total, '#10b981')}
+                ${renderBar('Químicos', cQuim, total, '#8b5cf6')}
+            `;
+
+            document.getElementById('sim-insight').textContent = `Maior componente: ${cMow > cEne ? 'Mão de Obra' : 'Energia'}. Sugestão: ${cMow > cEne ? 'Aumentar carga por ciclo para diluir custo operacional.' : 'Revisar programa de aquecimento da água.'}`;
+        }
+
+        function renderBar(label, val, total, color) {
+            const p = (val/total*100).toFixed(0);
+            return `
+                <div class="breakdown-row">
+                    <span class="breakdown-label">${label}</span>
+                    <div class="breakdown-bar-bg"><div class="breakdown-bar-fill" style="width:${p}%; background:${color}"></div></div>
+                    <span style="font-size:0.75rem; min-width:40px; text-align:right;">${p}%</span>
+                </div>
+            `;
+        }
+
+        // Alerts Logic
+        function renderAlerts() {
+            const p1 = document.getElementById('alerts-p1-list');
+            const p2 = document.getElementById('alerts-p2-list');
+            
+            const a1 = [
+                { t: 'Máquina Parada Não Planejada', m: 'LW-03 inativa há 8 min', d: 'Acionado manutenção automática via SCADA.' },
+                { t: 'SLA em Risco de Quebra', m: 'Lote 015 - Hospital Sta Cruz', d: 'Tempo projetado > prazo contratado em 22min.' }
+            ];
+            const a2 = [
+                { t: 'Consumo Água Acima Benchmark', m: 'LW-01 (+15%)', d: 'Verificar possível vazamento ou erro de dosagem.' },
+                { t: 'Gargalo de WIP Detectado', m: 'Setor de Passadoria', d: 'Fila crescendo há 20 min.' }
+            ];
+
+            p1.innerHTML = a1.map(a => `
+                <div style="padding: 12px; border-bottom: 1px solid var(--border);">
+                    <div style="color:var(--danger); font-weight:600; font-size:0.9rem;">${a.t}</div>
+                    <div style="font-size:0.8rem; margin: 4px 0;">${a.m}</div>
+                    <div style="font-size:0.75rem; color:var(--text-tertiary);">${a.d}</div>
+                </div>
+            `).join('');
+
+            p2.innerHTML = a2.map(a => `
+                <div style="padding: 12px; border-bottom: 1px solid var(--border);">
+                    <div style="color:var(--warning); font-weight:600; font-size:0.9rem;">${a.t}</div>
+                    <div style="font-size:0.8rem; margin: 4px 0;">${a.m}</div>
+                    <div style="font-size:0.75rem; color:var(--text-tertiary);">${a.d}</div>
+                </div>
+            `).join('');
+        }
+
+        // RFID Logic
+        function renderRFID() {
+            const body = document.getElementById('rfid-table-body');
+            body.innerHTML = '';
+            const mockRfid = [
+                { tag: 'E28011702000...F1A', item: 'Lençol Casal Alg.', loc: 'Entrada Lavagem', time: '14:32:07', batch: 'B-2026-05', status: 'Em Processo' },
+                { tag: 'E28011702000...D2B', item: 'Fronha Hosp.', loc: 'Saída Secagem', time: '14:30:15', batch: 'B-2026-04', status: 'Concluído' },
+                { tag: 'E28011702000...C3C', item: 'Toalha Banho', loc: 'Triagem', time: '14:28:44', batch: 'B-2026-05', status: 'Aguardando' }
+            ];
+            mockRfid.forEach(r => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="font-family: var(--font-mono); font-size: 0.75rem;">${r.tag}</td>
+                    <td>${r.item}</td>
+                    <td>${r.loc}</td>
+                    <td>${r.time}</td>
+                    <td>${r.batch}</td>
+                    <td><span class="status-pill status-running" style="background: rgba(59,130,246,0.1); color: var(--primary);">${r.status}</span></td>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        function sendIntervention(machineId, action) {
+            const toast = document.getElementById('notification-toast');
+            const msg = document.getElementById('toast-message');
+            msg.textContent = i18n[currentLang].toast_command + machineId + " [" + action + "]";
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // --- Real-time Simulation Engine ---
+        let simInterval;
+        const liveData = {
+            oee: 84.2,
+            cycles: 12,
+            water: 4.2,
+            alarms: 2,
+            productionLabels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
+            productionData: [450, 680, 890, 720, 950, 1100]
+        };
+
+        let prodChart, utilChart, effChart;
+
+        // Animated Counter Function
+        function animateValue(id, start, end, duration, suffix = "", decimals = 0) {
+            const obj = document.getElementById(id);
+            if (!obj) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const val = (progress * (end - start) + start).toFixed(decimals);
+                obj.innerText = val.replace('.', ',') + suffix;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function updateGlobalStats() {
+            // Simulate slight variations
+            const oldOee = liveData.oee;
+            liveData.oee = +(84 + Math.random() * 2).toFixed(1);
+            animateValue('stat-oee-val', oldOee, liveData.oee, 1000, "%", 1);
+
+            const oldCycles = liveData.cycles;
+            liveData.cycles = Math.floor(10 + Math.random() * 5);
+            animateValue('stat-cycles-val', oldCycles, liveData.cycles, 1000);
+
+            const oldWater = liveData.water;
+            liveData.water = +(4 + Math.random() * 0.5).toFixed(1);
+            animateValue('stat-water-val', oldWater, liveData.water, 1000, "m³", 1);
+        }
+
+        function updateLiveCharts() {
+            if (!prodChart) return;
+            
+            // Move production chart
+            const lastVal = liveData.productionData[liveData.productionData.length - 1];
+            const newVal = lastVal + (Math.random() * 40 - 15);
+            
+            liveData.productionData.push(newVal);
+            liveData.productionData.shift();
+            
+            prodChart.data.datasets[0].data = [...liveData.productionData];
+            prodChart.update('none'); 
+
+            // Update utility chart slightly
+            if (utilChart) {
+                const newData = utilChart.data.datasets[0].data.map(v => v + (Math.random() * 2 - 1));
+                utilChart.data.datasets[0].data = newData;
+                utilChart.update();
+            }
+        }
+
+        function updateMachinesTelemetry() {
+            machines.forEach(m => {
+                if (m.status === 'running') {
+                    m.progress = (m.progress + Math.random() * 2);
+                    if (m.progress >= 100) m.progress = 0;
+                    m.temp = +(m.temp + (Math.random() * 0.4 - 0.2)).toFixed(1);
+                    if (m.type === 'washer') m.ph = +(m.ph + (Math.random() * 0.1 - 0.05)).toFixed(2);
+                }
+            });
+            
+            const activeView = document.querySelector('.view.active').id;
+            if(activeView === 'view-monitor') renderMachines();
+            if(activeView === 'view-intervention') renderIntervention();
+        }
+
+        function startSimulation() {
+            simInterval = setInterval(() => {
+                updateGlobalStats();
+                updateLiveCharts();
+                updateMachinesTelemetry();
+            }, 3000);
+        }
+
+        // --- Charts Implementation ---
+        function initCharts() {
+            const ctxProd = document.getElementById('productionChart').getContext('2d');
+            prodChart = new Chart(ctxProd, {
+                type: 'line',
+                data: {
+                    labels: liveData.productionLabels,
+                    datasets: [{
+                        label: 'Produção Real',
+                        data: liveData.productionData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#3b82f6'
+                    }, {
+                        label: 'Meta',
+                        data: [500, 700, 900, 800, 1000, 1200],
+                        borderColor: 'rgba(148, 163, 184, 0.5)',
+                        borderDash: [5, 5],
+                        fill: false,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                    }
+                }
+            });
+
+            const ctxUtil = document.getElementById('utilityChart').getContext('2d');
+            utilChart = new Chart(ctxUtil, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Água', 'Gás', 'Eletricidade', 'Químicos'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, padding: 20 } } },
+                    cutout: '70%'
+                }
+            });
+
+            const ctxEff = document.getElementById('efficiencyHistoryChart').getContext('2d');
+            effChart = new Chart(ctxEff, {
+                type: 'bar',
+                data: {
+                    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+                    datasets: [{
+                        label: 'Eficiência (OEE %)',
+                        data: [78, 82, 85, 84],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initCharts();
+            renderMachines();
+            setLanguage('pt');
+            startSimulation();
+            
+            // Initial animation
+            animateValue('stat-oee-val', 0, 84.2, 2000, "%", 1);
+            animateValue('stat-cycles-val', 0, 12, 1500);
+            animateValue('stat-water-val', 0, 4.2, 1800, "m³", 1);
+            animateValue('stat-alarms-val', 0, 2, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.root{padding:1rem 0;}
+.alert-row{display:flex;gap:10px;margin-bottom:10px;align-items:stretch;}
+.sev{width:6px;border-radius:3px;flex-shrink:0;}
+.sev.red{background:#E24B4A;}
+.sev.amber{background:#BA7517;}
+.sev.blue{background:#185FA5;}
+.alert-card{flex:1;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.85rem 1rem;}
+.alert-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.alert-title{font-size:13px;font-weight:500;color:var(--color-text-primary);}
+.badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;}
+.badge.red{background:#FCEBEB;color:#A32D2D;}
+.badge.amber{background:#FAEEDA;color:#854F0B;}
+.badge.blue{background:#E6F1FB;color:#185FA5;}
+.badge.green{background:#EAF3DE;color:#3B6D11;}
+.alert-meta{font-size:11px;color:var(--color-text-tertiary);margin-bottom:5px;}
+.alert-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5;}
+.channel-row{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
+.ch{font-size:10px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:4px;padding:2px 7px;color:var(--color-text-secondary);}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-tertiary);margin:1.25rem 0 .75rem;}
+.logic-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.85rem 1rem;margin-bottom:10px;}
+.logic-title{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px;}
+.logic-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+</style>
+<div class="root">
+  <div class="section-label">Alertas críticos — ação imediata</div>
+
+  <div class="alert-row">
+    <div class="sev red"></div>
+    <div class="alert-card">
+      <div class="alert-header">
+        <span class="alert-title">Máquina parada não planejada</span>
+        <span class="badge red">P1 — imediato</span>
+      </div>
+      <div class="alert-meta">Gatilho: status = inativa por mais de 8 min fora de janela de setup</div>
+      <div class="alert-desc">Sistema verifica se há lote em processamento. Se sim, aciona manutenção e redistribui lote para equipamento alternativo automaticamente.</div>
+      <div class="channel-row">
+        <span class="ch">WhatsApp responsável</span>
+        <span class="ch">SMS supervisão</span>
+        <span class="ch">Dashboard piscando</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-row">
+    <div class="sev red"></div>
+    <div class="alert-card">
+      <div class="alert-header">
+        <span class="alert-title">SLA em risco de quebra</span>
+        <span class="badge red">P1 — imediato</span>
+      </div>
+      <div class="alert-meta">Gatilho: tempo projetado de conclusão &gt; prazo contratado − 2h</div>
+      <div class="alert-desc">Identifica o lote afetado, o cliente, o contrato e a multa estimada. Sugere priorização da fila e notifica gerência comercial.</div>
+      <div class="channel-row">
+        <span class="ch">WhatsApp gerência</span>
+        <span class="ch">E-mail comercial</span>
+        <span class="ch">Portal do cliente</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-row">
+    <div class="sev red"></div>
+    <div class="alert-card">
+      <div class="alert-header">
+        <span class="alert-title">Parâmetro de processo fora do limite</span>
+        <span class="badge red">P1 — imediato</span>
+      </div>
+      <div class="alert-meta">Gatilho: pH &lt; 6.5 ou &gt; 9.5 | temp. acima de +5°C do setpoint | dosagem de químico &gt; 120% do padrão</div>
+      <div class="alert-desc">Risco de dano às peças e retrabalho em massa. Pausa automática do ciclo se configurado — operador precisa confirmar retomada.</div>
+      <div class="channel-row">
+        <span class="ch">Alarme sonoro local</span>
+        <span class="ch">WhatsApp operador</span>
+        <span class="ch">Log de qualidade</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Alertas de atenção — resolução no turno</div>
+
+  <div class="alert-row">
+    <div class="sev amber"></div>
+    <div class="alert-card">
+      <div class="alert-header">
+        <span class="alert-title">Consumo de insumo acima do benchmark</span>
+        <span class="badge amber">P2 — no turno</span>
+      </div>
+      <div class="alert-meta">Gatilho: água &gt; benchmark + 15% | energia &gt; benchmark + 12% | acumulado no turno</div>
+      <div class="alert-desc">Compara com a média dos últimos 14 dias no mesmo turno. Exclui variação por volume — é o consumo por kg que dispara, não o absoluto.</div>
+      <div class="channel-row">
+        <span class="ch">Dashboard supervisor</span>
+        <span class="ch">E-mail turno seguinte</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-row">
+    <div class="sev amber"></div>
+    <div class="alert-card">
+      <div class="alert-header">
+        <span class="alert-title">Taxa de retrabalho elevada</span>
+        <span class="badge amber">P2 — no turno</span>
+      </div>
+      <div class="alert-meta">Gatilho: retrabalho acumulado do turno &gt; 2,5% dos itens processados</div>
+      <div class="alert-desc">Identifica a máquina e o operador com maior ocorrência. Sugere revisão de parâmetros ou pausa para calibração. Calcula impacto financeiro estimado no CMV do dia.</div>
+      <div class="channel-row">
+        <span class="ch">Dashboard supervisor</span>
+        <span class="ch">Relatório de qualidade</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-row">
+    <div class="sev amber"></div>
+    <div class="alert-card">
+      <div class="alert-header">
+        <span class="alert-title">Gargalo de WIP detectado</span>
+        <span class="badge amber">P2 — no turno</span>
+      </div>
+      <div class="alert-meta">Gatilho: fila em uma etapa &gt; 2× a média histórica da etapa e crescendo há 20 min</div>
+      <div class="alert-desc">Aponta a estação gargalo, volume acumulado e tempo estimado de absorção. Sugere redistribuição ou alocação de operador adicional.</div>
+      <div class="channel-row">
+        <span class="ch">Dashboard produção</span>
+        <span class="ch">Notificação supervisor</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Alertas informativos — gestão e planejamento</div>
+
+  <div class="alert-row">
+    <div class="sev blue"></div>
+    <div class="alert-card">
+      <div class="alert-header">
+        <span class="alert-title">Margem por cliente abaixo do piso</span>
+        <span class="badge blue">P3 — diário</span>
+      </div>
+      <div class="alert-meta">Gatilho: margem realizada do contrato &lt; 40% nos últimos 7 dias corridos</div>
+      <div class="alert-desc">Calcula contribuição líquida do cliente considerando retrabalho, hora extra e insumos específicos. Aciona revisão comercial.</div>
+      <div class="channel-row">
+        <span class="ch">E-mail gerência</span>
+        <span class="ch">Relatório diário</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-row">
+    <div class="sev blue"></div>
+    <div class="alert-card">
+      <div class="alert-header">
+        <span class="alert-title">Manutenção preditiva sugerida</span>
+        <span class="badge blue">P3 — programado</span>
+      </div>
+      <div class="alert-meta">Gatilho: horas de uso &gt; 85% do intervalo de manutenção | vibração anômala detectada por 3 ciclos consecutivos</div>
+      <div class="alert-desc">Gera ordem de serviço com data sugerida, peças prováveis e tempo estimado de parada. Integra ao calendário de turnos para minimizar impacto.</div>
+      <div class="channel-row">
+        <span class="ch">E-mail manutenção</span>
+        <span class="ch">Sistema de OS</span>
+        <span class="ch">Dashboard preventivo</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Lógica de contexto — o que diferencia alertas inteligentes</div>
+  <div class="grid2">
+    <div class="logic-box">
+      <div class="logic-title">Normalização por volume</div>
+      <div class="logic-desc">O alerta de consumo compara L/kg e kWh/kg — não o consumo absoluto. Um turno com 5t processa mais e consome mais; o problema é a eficiência por kg, não o total.</div>
+    </div>
+    <div class="logic-box">
+      <div class="logic-title">Janela de comparação adaptativa</div>
+      <div class="logic-desc">O benchmark é calculado com os últimos 14 dias do mesmo turno (manhã, tarde, noite) e do mesmo tipo de lote (hospitalar, hoteleiro). Elimina sazonalidade falsa.</div>
+    </div>
+    <div class="logic-box">
+      <div class="logic-title">Supressão de alertas em cascata</div>
+      <div class="logic-desc">Se uma máquina está parada (P1 ativo), os alertas de gargalo decorrentes são suprimidos — causados pela mesma raiz. Sem supressão, a equipe recebe dezenas de alertas do mesmo evento.</div>
+    </div>
+    <div class="logic-box">
+      <div class="logic-title">Escalada automática por tempo</div>
+      <div class="logic-desc">Alerta P2 não resolvido em 45 min escala para P1 e notifica gerência. Evita que problemas de turno passem sem resolução e impactem o fechamento do dia.</div>
+    </div>
+  </div>
+</div>
